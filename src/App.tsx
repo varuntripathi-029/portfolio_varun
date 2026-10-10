@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState, type CSSProperties } from 'react'
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { profile } from './data'
 import Experience from './pages/Experience'
@@ -7,6 +7,15 @@ import Hackathons from './pages/Hackathons'
 import Blogs from './pages/Blogs'
 import BlogPost from './pages/BlogPost'
 import Leadership from './pages/Leadership'
+import { accentAt } from './palette'
+
+const sections = [
+  { to: '/', label: 'Experience' },
+  { to: '/projects', label: 'Projects' },
+  { to: '/hackathons', label: 'Hackathons' },
+  { to: '/blogs', label: 'Blogs' },
+  { to: '/leadership', label: 'Leadership' },
+]
 
 type Theme = 'light' | 'dark'
 
@@ -42,21 +51,18 @@ function Sidebar() {
   return (
     <aside className="sidebar">
       <nav className="nav" aria-label="Sections">
-        <NavLink to="/" end className="nav-link">
-          Experience
-        </NavLink>
-        <NavLink to="/projects" className="nav-link">
-          Projects
-        </NavLink>
-        <NavLink to="/hackathons" className="nav-link">
-          Hackathons
-        </NavLink>
-        <NavLink to="/blogs" className="nav-link">
-          Blogs
-        </NavLink>
-        <NavLink to="/leadership" className="nav-link">
-          Leadership
-        </NavLink>
+        {sections.map((n, i) => (
+          <NavLink
+            key={n.to}
+            to={n.to}
+            end={n.to === '/'}
+            viewTransition
+            className="nav-link"
+            style={{ '--accent': accentAt(i) } as CSSProperties}
+          >
+            {n.label}
+          </NavLink>
+        ))}
       </nav>
       <div className="nav nav-links">
         <a href={profile.linkedin} target="_blank" rel="noreferrer">
@@ -87,6 +93,49 @@ function Sidebar() {
   )
 }
 
+function useRevealAndGlow() {
+  const { pathname } = useLocation()
+
+  useLayoutEffect(() => {
+    const els = Array.from(
+      document.querySelectorAll<HTMLElement>('.card:not(.hero), .banner, .page-head, .reel, .back'),
+    )
+    els.forEach((el) => el.setAttribute('data-reveal', ''))
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entering = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left)
+        entering.forEach((e, i) => {
+          const el = e.target as HTMLElement
+          el.style.setProperty('--d', `${Math.min(i, 5) * 80}ms`)
+          el.classList.add('is-in')
+          io.unobserve(el)
+        })
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -6% 0px' },
+    )
+    els.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [pathname])
+
+  useEffect(() => {
+    let frame = 0
+    const onMove = (e: PointerEvent) => {
+      const el = (e.target as Element | null)?.closest<HTMLElement>('.card, .banner')
+      if (!el) return
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        const r = el.getBoundingClientRect()
+        el.style.setProperty('--mx', `${e.clientX - r.left}px`)
+        el.style.setProperty('--my', `${e.clientY - r.top}px`)
+      })
+    }
+    document.addEventListener('pointermove', onMove, { passive: true })
+    return () => document.removeEventListener('pointermove', onMove)
+  }, [])
+}
+
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
@@ -97,6 +146,7 @@ function ScrollToTop() {
 
 export default function App() {
   const location = useLocation()
+  useRevealAndGlow()
   return (
     <div className="shell">
       <ScrollToTop />
