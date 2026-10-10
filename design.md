@@ -69,7 +69,7 @@ This is the most important layout rule. Each section is one screen, because a sc
 
 ### Masonry (Projects, Blogs, Hackathons)
 
-- `spans` gives each child's preferred width in units of a 6-unit grid (2 = a third, 3 = a half, 6 = full). Projects and Blogs use `[2, 2, 2, 3, 3]` (three narrow tiles over two wide ones); Hackathons uses `[3, 3, 3, 3, 6]`.
+- **Tile layout is automatic.** `<Masonry>` with no `spans` derives the standard layout from the child count via `tileLayout(n)`: blocks of five (three narrow tiles over two wide ones), and a partial block is completed (1 card spans the row, 2 are wide, 3 are narrow, 4 are two rows of two). Projects, Blogs and Hackathons all use it, so they share one tile size (`--tile-h: 310px`, one-third and one-half widths). **To add a card, add a child; do not edit spans.** Pass `spans` only for a deliberately custom grid.
 - `alt` lets an item fall back to a narrower span when that packs without a hole (the wide tiles 4 and 5 become a third each and slot under tiles 2 and 3 when tile 1 is open).
 - Placement: for every aligned slot at every allowed width, take the leftmost one whose top is within 48 px of the highest, preferring the wider width. The 48 px tolerance keeps the designed order while collapsed and only reshuffles when a card genuinely grows.
 - Every frame a card's height changes (a `ResizeObserver` per card), positions are recomputed from live heights, so neighbours follow the expanding card smoothly and return one by one as cards collapse. A change of column glides over `--expand-dur`; a change of width transitions the same way.
@@ -95,8 +95,9 @@ Sections sit side by side in a horizontal flex track (`.pager`). The user scroll
 
 Every vertical scroll, on every input, ends in the same right-to-left glide:
 
-- **Wheel and trackpad:** a section that fits the screen moves on at once. A taller section scrolls inside itself, and once its end is reached a little more scrolling in the same direction (`OVERSCROLL`, 110 px) moves on, so the user never needs a separate gesture.
-- **Touch (phones and tablets):** a vertical swipe of at least 56 px moves to the next or previous section. If the section is taller than the screen, only a swipe that starts at its end moves on, so reading is never interrupted. Horizontal swipes pan the track natively and snap.
+- **Wheel and trackpad:** a section that fits the screen moves on after a deliberate scroll (`FIT_PUSH`, 90 px, about one wheel notch). A taller section scrolls inside itself; at its end, only a gesture that *began* there counts, and it takes `OVERSCROLL` (360 px, three or four notches) in the same direction. Momentum that merely arrives at the end never pages, and neither does a flick while reading the top of a section. Pushes add up within 350 ms and start again after a pause.
+- **After every glide** a 600 ms hold (`COOLDOWN`) stops a quick second scroll from chaining straight into another section. When a glide lands, the arriving section is placed at its near end: the top when moving forward, the bottom when going back.
+- **Touch (phones and tablets):** a vertical swipe of at least 90 px moves to the next or previous section. If the section is taller than the screen, only a swipe that starts at its end moves on, so reading is never interrupted. Horizontal swipes pan the track natively and snap.
 - **Keys, dots and the sidebar** all just change the URL, which animates the track.
 - **Phones use the same pager.** Below 760 px the sidebar becomes a one-row top bar, the section fills the rest of the screen (`100dvh`), and the outbound links live in the Find me card.
 - **Blog write-ups** (`/blogs/:slug`) are the one normal scrolling page; they arrive from the right with the same easing.
@@ -208,12 +209,12 @@ A spotlight-style overlay (sidebar button, `/` or Cmd/Ctrl+K) that searches the 
 
 ## 9b2. Hackathons
 
-Colored tiles like Projects and Blogs, packed by `Masonry` (`[3, 3, 3, 3, 6]`), with a results strip above them.
+Colored tiles like Projects and Blogs, packed by `Masonry` with the standard tile layout (four hackathons plus the Honors tile make the usual five).
 
-- Each tile is `ExpandBanner` with a colored fill (podium in terracotta, then blue, teal, ochre), a solid white result chip, the organiser's one-liner, and a **ticket** (`Pass` in `Hackathons.tsx`) on the right: the organiser's logo, the number worth remembering in Bricolage Grotesque, and a caption.
+- Each tile is `ExpandBanner` with a colored fill (podium in terracotta, then blue, teal, ochre), a solid white result chip, the organiser's one-liner, and a small **organiser badge** (`OrgBadge` in `Hackathons.tsx`): the organiser's logo, name and event. There are deliberately **no stat tags or summary strips** here; they were removed on request, so do not reintroduce numbers on these tiles.
 - Organiser logos live in `public/logos/` and are used only to identify the event: Zoho Catalyst and Economic Times (from their site icons), Redrob AI, and LatentCode (its own `favicon.svg`). They are trademarks of their owners.
-- A new hackathon needs `org`, `logo`, `line` and `stat` in `src/data.ts` next to the existing fields.
-- **Type:** Bricolage Grotesque (`--font-poster`) is used only for hackathon numbers and the strip. Do not spread it to other sections.
+- A new hackathon needs `org`, `logo` and `line` in `src/data.ts` next to the existing fields. Colors cycle through four fills.
+- **Type:** Bricolage Grotesque (`--font-poster`) is used only for the organiser name here. Do not spread it to other sections.
 
 ## 9c. Paper Hands (the quant terminal)
 
