@@ -18,6 +18,9 @@ export default function Hackathons() {
             badge={h.result}
           >
             <p>{h.detail}</p>
+            <a className="text-link" href={h.repo} target="_blank" rel="noreferrer">
+              GitHub ↗
+            </a>
           </ExpandCard>
         ))}
         <div className="span-2">

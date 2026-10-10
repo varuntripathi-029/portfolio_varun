@@ -86,7 +86,10 @@ export const projects: Project[] = [
       'Gates an LLM extractor behind a rule pre-filter and a small classifier, cutting inference spend 12x at 0.96 mean confidence',
       '48 endpoints, 319 tests',
     ],
-    links: [{ label: 'Live site', href: 'https://get-job-fe.vercel.app/' }],
+    links: [
+      { label: 'Live site', href: 'https://get-job-fe.vercel.app/' },
+      { label: 'GitHub', href: 'https://github.com/varuntripathi-029/get_job_be' },
+    ],
     status: 'Actively building',
   },
   {
@@ -105,7 +108,7 @@ export const projects: Project[] = [
       '3 CLI agents behind one adapter interface; 13-message JSON protocol',
       '4,508 lines across 31 files in 10 days',
     ],
-    links: [{ label: 'Code', href: 'https://github.com/varuntripathi-029/remote-agent' }],
+    links: [{ label: 'GitHub', href: 'https://github.com/varuntripathi-029/remote-agent' }],
   },
   {
     slug: 'mx-rating',
@@ -121,7 +124,10 @@ export const projects: Project[] = [
       '9-stage workflow, ~13 deterministic checks across 6 dimensions',
       'Citation validation on every LLM statement',
     ],
-    links: [{ label: 'Live site', href: 'https://ma-frontend-seven.vercel.app/' }],
+    links: [
+      { label: 'Live site', href: 'https://ma-frontend-seven.vercel.app/' },
+      { label: 'GitHub', href: 'https://github.com/varuntripathi-029/MA_backend' },
+    ],
   },
   {
     slug: 'legal-contract-analyzer',
@@ -141,6 +147,7 @@ export const projects: Project[] = [
     links: [
       { label: 'Frontend', href: 'https://legal-rag-frontend-silk.vercel.app/' },
       { label: 'API docs', href: 'https://babemario-legal-clause-be.hf.space/docs' },
+      { label: 'GitHub', href: 'https://github.com/varuntripathi-029/legal_clause_analyzer-be' },
     ],
   },
   {
@@ -157,7 +164,10 @@ export const projects: Project[] = [
       'Beats the persistence baseline by 7.3%',
       '59 automated test cases',
     ],
-    links: [{ label: 'Live site', href: 'https://eta-liard-nine.vercel.app/' }],
+    links: [
+      { label: 'Live site', href: 'https://eta-liard-nine.vercel.app/' },
+      { label: 'GitHub', href: 'https://github.com/varuntripathi-029/ETA' },
+    ],
   },
 ]
 
@@ -167,6 +177,7 @@ export const hackathons = [
     when: 'Jul 2026',
     result: '3rd Runner Up',
     title: 'Crime Intelligence Platform',
+    repo: 'https://github.com/varuntripathi-029/crime-intelligence-platform',
     detail:
       '10 FastAPI microservices on real NCRB crime data: forecasting, network analysis, explainable AI (SHAP) and offender profiling. React 19, Leaflet, D3.',
   },
@@ -175,6 +186,7 @@ export const hackathons = [
     when: 'Jun 2026',
     result: 'Finalist',
     title: 'Candidate ranking pipeline',
+    repo: 'https://github.com/varuntripathi-029/Secret_saucers',
     detail:
       '4-stage pipeline ranking 100K resumes in under 45 seconds on CPU. Sentence-transformers, ONNX Runtime and FAISS with a 13-feature weighted scorecard and deterministic explanations.',
   },
@@ -183,6 +195,7 @@ export const hackathons = [
     when: 'Jul 2026',
     result: 'Finalist',
     title: 'UrbanAir Intel',
+    repo: 'https://github.com/varuntripathi-029/ETA',
     detail: 'Air-quality forecasting and source attribution with a PyTorch ConvLSTM, LangGraph and Groq.',
   },
   {
@@ -190,6 +203,7 @@ export const hackathons = [
     when: 'Aug 2026',
     result: 'Finalist',
     title: 'SynapseScan',
+    repo: 'https://github.com/varuntripathi-029/SynapseScan',
     detail:
       'Tech-debt intelligence platform: RAG over code chunks, tree-sitter AST parsing, CI/CD webhook integration and PostgreSQL. Next.js 14.',
   },
@@ -249,7 +263,7 @@ export const blogs: Blog[] = [
     ],
     links: [
       { label: 'Live demo', href: 'https://upstox-ass.vercel.app/' },
-      { label: 'Code', href: 'https://github.com/varuntripathi-029/upstox_ass' },
+      { label: 'GitHub', href: 'https://github.com/varuntripathi-029/upstox_ass' },
     ],
   },
   {
