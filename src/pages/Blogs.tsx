@@ -8,7 +8,7 @@ export default function Blogs() {
       <PageHead title="Blogs">
         Write-ups on fintech products and the systems behind them. Some come with a working demo.
       </PageHead>
-      <div className="grid grid-top">
+      <div className="grid grid-top tiles-3">
         {blogs.map((b) => (
           <ExpandBanner
             key={b.slug}

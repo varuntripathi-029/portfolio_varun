@@ -1705,3 +1705,168 @@ h2.card-title {
 .shot-view img.is-loaded {
   opacity: 1;
 }
+
+/* ---- each section is one screen: tighter rhythm so a scroll gesture can page cleanly ---- */
+.pager-panel {
+  --gutter: 24px;
+  padding-bottom: 64px;
+}
+
+.pager-panel .page-head {
+  margin-bottom: 20px;
+}
+
+.pager-panel .page-head h1 {
+  font-size: 26px;
+}
+
+.pager-panel .banner {
+  padding: 28px 32px;
+}
+
+.pager-panel .grid-top {
+  --tile-h: clamp(210px, calc((100vh - 370px) / 2 - 56px), 320px);
+}
+
+.pager-panel .banner-head {
+  min-height: var(--tile-h, 260px);
+}
+
+.exp-grid .hero {
+  min-height: 0;
+  padding: 30px 36px;
+}
+
+.exp-grid .avatar {
+  width: 84px;
+  height: 105px;
+  margin-bottom: 10px;
+}
+
+.exp-grid .hero h1 {
+  font-size: 27px;
+  max-width: 26ch;
+}
+
+.exp-grid .lede {
+  margin-top: 4px;
+}
+
+.exp-grid .pill-btn {
+  margin-top: 10px;
+}
+
+.side-stack {
+  align-self: stretch;
+  grid-template-rows: 1fr auto;
+}
+
+.side-stack .now {
+  justify-content: center;
+}
+
+.links-card {
+  padding: 22px 28px;
+}
+
+.link-pills {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.link-pills a {
+  display: inline-block;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: color-mix(in srgb, var(--accent) 85%, var(--ink));
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.35s var(--ease), color 0.35s var(--ease), transform 0.4s var(--ease);
+}
+
+.link-pills a:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.card-title-sm {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.exp-grid .card {
+  padding: 24px 28px;
+}
+
+/* blogs: three tiles over two, so five fit one screen */
+.tiles-3 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  --tile-h: clamp(170px, calc((100vh - 370px) / 2 - 56px), 280px);
+}
+
+.tiles-3 > .banner:nth-child(-n + 3) {
+  grid-column: span 2;
+}
+
+.tiles-3 > .banner:nth-child(n + 4),
+.tiles-3 > .banner:last-child:nth-child(odd) {
+  grid-column: span 3;
+}
+
+.tiles-3 > .banner:nth-child(-n + 3) .banner-head > .chips,
+.tiles-3 > .banner:nth-child(-n + 3) .banner-head > .banner-title,
+.tiles-3 > .banner:nth-child(-n + 3) .banner-head > .banner-teaser {
+  max-width: 56%;
+}
+
+.tiles-3 > .banner:nth-child(-n + 3) .banner-title {
+  font-size: 20px;
+}
+
+.tiles-3 > .banner:nth-child(-n + 3) .banner-teaser {
+  font-size: 14px;
+}
+
+.tiles-3 > .banner:nth-child(-n + 3) .tile-art {
+  width: 50%;
+  top: 56px;
+}
+
+.tiles-3 > .banner:nth-child(n + 4) .tile-art {
+  width: 40%;
+  top: 56px;
+}
+
+.tiles-3 .banner-head {
+  gap: 12px;
+}
+
+.tiles-3 .art-value {
+  font-size: 28px;
+}
+
+.tiles-3 .ph {
+  min-height: 180px;
+  padding: 16px;
+}
+
+@media (max-width: 1000px) {
+  .tiles-3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tiles-3 > .banner:nth-child(n) {
+    grid-column: auto;
+  }
+}
+
+.now h2 {
+  max-width: none;
+}

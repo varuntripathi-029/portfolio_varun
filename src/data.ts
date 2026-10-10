@@ -3,7 +3,7 @@ export const profile = {
   headline:
     'AI engineer building RAG pipelines, agentic workflows and LLM systems that run in production',
   intro:
-    'Final-year B.Tech at IIIT Nagpur (ECE, IoT, 2023–2027). Currently an AI + QA engineer intern at TIFIN AI, working on agentic infrastructure for wealth management.',
+    'Final-year B.Tech at IIIT Nagpur. AI + QA engineer intern at TIFIN AI, building agentic infrastructure for wealth management.',
   email: 'varun.tripathi2004@gmail.com',
   linkedin: 'https://www.linkedin.com/in/varun-tripathi-bb338a295/',
   github: 'https://github.com/varuntripathi-029',

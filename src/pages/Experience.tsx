@@ -61,7 +61,7 @@ export default function Experience() {
 
         <section className="card links-card">
           <h2 className="card-title">Find me</h2>
-          <ul className="link-rows">
+          <ul className="link-pills">
             {links.map((l, i) => (
               <li key={l.label}>
                 <a
@@ -70,11 +70,8 @@ export default function Experience() {
                   rel="noreferrer"
                   style={{ '--accent': accentAt(i) } as CSSProperties}
                 >
-                  <span className="link-label">{l.label}</span>
-                  <span className="link-note">{l.note}</span>
-                  <span className="link-arrow" aria-hidden="true">
-                    ↗
-                  </span>
+                  {l.label}
+                  <span aria-hidden="true"> ↗</span>
                 </a>
               </li>
             ))}
@@ -87,7 +84,7 @@ export default function Experience() {
       </div>
 
       <section className="card">
-        <h2 className="card-title">Experience</h2>
+        <h2 className="card-title card-title-sm">Experience</h2>
         <Timeline
           items={experience.map((e) => ({
             title: `${e.role}, ${e.org}`,
