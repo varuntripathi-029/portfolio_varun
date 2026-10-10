@@ -9,10 +9,27 @@ export const RISK_FREE = 0.065
 // Modelled as an index ETF tracking the series: flat brokerage plus statutory and exchange charges.
 export const BROKERAGE = 20
 export const CHARGE_RATE = 0.0013
-export const STCG_RATE = 0.2
-export const LTCG_RATE = 0.125
-export const LTCG_EXEMPTION = 125_000
-export const CESS = 0.04
+
+// Indian equity capital-gains tax follows the law on the date of sale. Surcharge is not modelled.
+export type TaxRegime = { stcg: number; ltcg: number; exempt: number; cess: number }
+export const LTCG_REGIME_START = '2018-04-01' // long-term gains were exempt before this date
+export const GRANDFATHER_FMV_DATE = '2018-01-31'
+export const GRANDFATHER_CUTOFF = '2018-02-01' // acquired before this date: cost is stepped up
+export const REFORM_DATE = '2024-07-23' // new rates apply to transfers on or after this date
+
+export function regimeOn(date: string): TaxRegime {
+  if (date < LTCG_REGIME_START) return { stcg: 0.15, ltcg: 0, exempt: 0, cess: 0.03 }
+  if (date < REFORM_DATE) return { stcg: 0.15, ltcg: 0.1, exempt: 100_000, cess: 0.04 }
+  return { stcg: 0.2, ltcg: 0.125, exempt: 125_000, cess: 0.04 }
+}
+
+// Long-term means held for MORE than 12 months, so the first long-term day is the day after the
+// twelve-month anniversary.
+export function isLongTerm(entry: string, sale: string): boolean {
+  const e = new Date(`${entry}T00:00:00Z`)
+  e.setUTCFullYear(e.getUTCFullYear() + 1)
+  return Date.parse(`${sale}T00:00:00Z`) > e.getTime()
+}
 
 export type Series = { name: string; source: string; from: string; to: string; dates: string[]; nav: number[] }
 
@@ -107,8 +124,8 @@ const fyOf = (date: string) => {
   return m >= 4 ? y : y - 1
 }
 
-const daysBetween = (a: string, b: string) => (Date.parse(b) - Date.parse(a)) / 86_400_000
-
+// Signals are decided at one close and filled at the next, so a rule never trades on a price it
+// had not yet seen. Index 0 is filled on day 0 (buy and hold starts immediately).
 export function run(dates: string[], prices: number[], sig: boolean[], opts: Options): RunResult {
   const n = prices.length
   let cash = START_CAPITAL
@@ -121,34 +138,48 @@ export function run(dates: string[], prices: number[], sig: boolean[], opts: Opt
   const ltcgUsed: Record<number, number> = {}
   const equity = new Array<number>(n)
 
+  // Fair market value per unit on 31 Jan 2018, used to step up the cost of older holdings.
+  let fmv: number | null = null
+  if (n > 0 && dates[0] <= GRANDFATHER_FMV_DATE) {
+    for (let i = 0; i < n && dates[i] <= GRANDFATHER_FMV_DATE; i++) fmv = prices[i]
+  }
+
   const sell = (t: number) => {
     const proceeds = shares * prices[t]
     const fee = opts.charges ? BROKERAGE + CHARGE_RATE * proceeds : 0
-    const gain = proceeds - fee - basis
-    const long = daysBetween(entry, dates[t]) > 365
+    const long = isLongTerm(entry, dates[t])
+    const reg = regimeOn(dates[t])
+    let cost = basis
+    if (long && fmv !== null && entry < GRANDFATHER_CUTOFF && dates[t] >= LTCG_REGIME_START) {
+      cost = Math.max(basis, Math.min(fmv * shares, proceeds))
+    }
+    const taxableGain = proceeds - fee - cost
     let due = 0
-    if (opts.tax && gain > 0) {
+    if (opts.tax && taxableGain > 0) {
       if (long) {
-        const fy = fyOf(dates[t])
-        const used = ltcgUsed[fy] ?? 0
-        const free = Math.max(0, LTCG_EXEMPTION - used)
-        const taxable = Math.max(0, gain - free)
-        ltcgUsed[fy] = used + Math.min(gain, free)
-        due = taxable * LTCG_RATE * (1 + CESS)
+        if (reg.ltcg > 0) {
+          const fy = fyOf(dates[t])
+          const used = ltcgUsed[fy] ?? 0
+          const free = Math.max(0, reg.exempt - used)
+          const taxable = Math.max(0, taxableGain - free)
+          ltcgUsed[fy] = used + Math.min(taxableGain, free)
+          due = taxable * reg.ltcg * (1 + reg.cess)
+        }
       } else {
-        due = gain * STCG_RATE * (1 + CESS)
+        due = taxableGain * reg.stcg * (1 + reg.cess)
       }
     }
+    const economicGain = proceeds - fee - basis
     cash = proceeds - fee - due
     charges += fee
     tax += due
-    trades.push({ date: dates[t], side: 'SELL', price: prices[t], value: proceeds, fee, tax: due, pnl: gain - due, term: long ? 'LT' : 'ST' })
+    trades.push({ date: dates[t], side: 'SELL', price: prices[t], value: proceeds, fee, tax: due, pnl: economicGain - due, term: long ? 'LT' : 'ST' })
     shares = 0
   }
 
   for (let t = 0; t < n; t++) {
-    const want = sig[t]
-    if (want && shares === 0) {
+    const want = sig[Math.max(t - 1, 0)]
+    if (want && shares === 0 && t < n - 1) {
       const fee = opts.charges ? BROKERAGE + CHARGE_RATE * cash : 0
       basis = cash
       shares = (cash - fee) / prices[t]
@@ -165,6 +196,8 @@ export function run(dates: string[], prices: number[], sig: boolean[], opts: Opt
 
   return { equity, finalValue: cash, trades, charges, tax }
 }
+
+const daysBetween = (a: string, b: string) => (Date.parse(b) - Date.parse(a)) / 86_400_000
 
 export type Metrics = {
   finalValue: number
