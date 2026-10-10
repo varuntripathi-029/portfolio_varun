@@ -1,8 +1,44 @@
 import { Children, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 
+/**
+ * The standard tile layout, derived from how many cards there are, so adding a card never needs a
+ * layout edit. Five cards make one block: three narrow tiles over two wide ones. A partial block
+ * at the end is completed sensibly (one card spans the row, two are wide, three are narrow,
+ * four are two rows of two). Wide tiles may narrow when that fills a gap.
+ */
+export function tileLayout(count: number): { spans: number[]; alt: (number | undefined)[] } {
+  const spans: number[] = []
+  const alt: (number | undefined)[] = []
+  const push = (span: number, narrower?: number) => {
+    spans.push(span)
+    alt.push(narrower)
+  }
+  let left = count
+  while (left >= 5) {
+    push(2)
+    push(2)
+    push(2)
+    push(3, 2)
+    push(3, 2)
+    left -= 5
+  }
+  if (left === 1) push(6)
+  else if (left === 2) {
+    push(3, 2)
+    push(3, 2)
+  } else if (left === 3) {
+    push(2)
+    push(2)
+    push(2)
+  } else if (left === 4) {
+    for (let i = 0; i < 4; i++) push(3, 2)
+  }
+  return { spans, alt }
+}
+
 type Props = {
-  /** Width of each child in grid units, in order. */
-  spans: number[]
+  /** Width of each child in grid units. Leave out to use the standard tile layout. */
+  spans?: number[]
   /** Optional narrower width an item may fall back to when that packs the grid without a hole. */
   alt?: (number | undefined)[]
   /** Number of grid units across (default 6, so spans of 2 and 3 make three or two columns). */
@@ -36,12 +72,15 @@ function useNarrow() {
  * an expanding card smoothly. When a card changes column (a discrete jump) it glides there.
  * Collapsing reverses all of it. Use it for any group of expandable cards.
  */
-export default function Masonry({ spans, alt, units = 6, className = '', children }: Props) {
+export default function Masonry({ spans: spansProp, alt: altProp, units = 6, className = '', children }: Props) {
   const box = useRef<HTMLDivElement>(null)
   const slots = useRef<(HTMLDivElement | null)[]>([])
   const last = useRef<{ x: number; y: number }[]>([])
   const narrow = useNarrow()
   const items = Children.toArray(children)
+  const auto = tileLayout(items.length)
+  const spans = spansProp ?? auto.spans
+  const alt = altProp ?? (spansProp ? undefined : auto.alt)
 
   useLayoutEffect(() => {
     const el = box.current
@@ -111,7 +150,7 @@ export default function Masonry({ spans, alt, units = 6, className = '', childre
     ro.observe(el)
     slots.current.forEach((s) => s && ro.observe(s))
     return () => ro.disconnect()
-  }, [narrow, spans, alt, units, items.length])
+  }, [narrow, spans.join(','), alt?.join(','), units, items.length])
 
   return (
     <div ref={box} className={`mason ${className}`.trim()}>

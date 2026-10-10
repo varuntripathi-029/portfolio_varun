@@ -2,8 +2,6 @@ import { projects } from '../data'
 import { ExpandBanner, PageHead, Shot } from '../components'
 import Masonry from '../Masonry'
 
-const SPANS = [2, 2, 2, 3, 3]
-const ALT = [undefined, undefined, undefined, 2, 2]
 
 export default function Projects() {
   return (
@@ -11,7 +9,7 @@ export default function Projects() {
       <PageHead title="Projects">
         Built end to end: retrieval, inference, the interface on top, and the tests nobody asked for.
       </PageHead>
-      <Masonry spans={SPANS} alt={ALT} className="tiles-3">
+      <Masonry className="tiles-3">
         {projects.map((p) => (
           <ExpandBanner
             key={p.slug}
