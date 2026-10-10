@@ -1,5 +1,5 @@
 import { hackathons, honors } from '../data'
-import { PageHead } from '../components'
+import { ExpandCard, PageHead } from '../components'
 
 export default function Hackathons() {
   return (
@@ -7,25 +7,26 @@ export default function Hackathons() {
       <PageHead title="Hackathons">
         Four builds under a deadline in 2026: one podium, three finals.
       </PageHead>
-      <div className="grid">
+      <div className="grid grid-top">
         {hackathons.map((h) => (
-          <section key={h.title} className="card">
-            <p className="card-kicker">
-              {h.event}, {h.when}
-            </p>
-            <h2 className="card-title">{h.title}</h2>
-            <p className="result">{h.result}</p>
+          <ExpandCard
+            key={h.title}
+            kicker={`${h.event}, ${h.when}`}
+            title={h.title}
+            badge={h.result}
+          >
             <p>{h.detail}</p>
-          </section>
+          </ExpandCard>
         ))}
-        <section className="card span-2">
-          <h2 className="card-title">Honors</h2>
-          <ul className="plain-list">
-            {honors.map((h) => (
-              <li key={h}>{h}</li>
-            ))}
-          </ul>
-        </section>
+        <div className="span-2">
+          <ExpandCard title="Honors" badge={`${honors.length} highlights`}>
+            <ul className="plain-list">
+              {honors.map((h) => (
+                <li key={h}>{h}</li>
+              ))}
+            </ul>
+          </ExpandCard>
+        </div>
       </div>
     </>
   )

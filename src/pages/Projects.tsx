@@ -1,5 +1,5 @@
 import { projects } from '../data'
-import { PageHead } from '../components'
+import { ExpandBanner, PageHead } from '../components'
 
 export default function Projects() {
   return (
@@ -7,29 +7,17 @@ export default function Projects() {
       <PageHead title="Projects">
         AI systems I’ve built end to end, from retrieval and inference to the interface on top.
       </PageHead>
-      <div className="stack">
+      <div className="grid grid-top">
         {projects.map((p) => (
-          <article key={p.slug} className="banner banner-wide" style={{ background: p.color }}>
-            <div className="banner-copy">
-              <div className="chips">
-                {p.tags.map((t) => (
-                  <span key={t} className="chip">
-                    {t}
-                  </span>
-                ))}
-                {p.status && <span className="chip chip-solid">{p.status}</span>}
-              </div>
-              <h2>{p.title}</h2>
-              <p>{p.summary}</p>
-              <div className="actions">
-                {p.links.map((l) => (
-                  <a key={l.href} className="ghost-btn" href={l.href} target="_blank" rel="noreferrer">
-                    {l.label} ↗
-                  </a>
-                ))}
-              </div>
-            </div>
-            <div className="banner-panel">
+          <ExpandBanner
+            key={p.slug}
+            color={p.color}
+            chips={[...p.tags, ...(p.status ? [p.status] : [])]}
+            title={p.title}
+            teaser={p.tagline}
+          >
+            <p className="banner-summary">{p.summary}</p>
+            <div className="panel">
               <p className="panel-label">Stack</p>
               <ul>
                 {p.stack.map((s) => (
@@ -43,7 +31,14 @@ export default function Projects() {
                 ))}
               </ul>
             </div>
-          </article>
+            <div className="actions">
+              {p.links.map((l) => (
+                <a key={l.href} className="ghost-btn" href={l.href} target="_blank" rel="noreferrer">
+                  {l.label} ↗
+                </a>
+              ))}
+            </div>
+          </ExpandBanner>
         ))}
       </div>
     </>

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { blogs } from '../data'
-import { PageHead } from '../components'
+import { ExpandBanner, PageHead } from '../components'
 
 export default function Blogs() {
   return (
@@ -8,25 +8,27 @@ export default function Blogs() {
       <PageHead title="Blogs">
         Write-ups on fintech products and the systems behind them. Some come with a working demo.
       </PageHead>
-      <div className="grid">
+      <div className="grid grid-top">
         {blogs.map((b) => (
-          <Link key={b.slug} to={`/blogs/${b.slug}`} className="banner banner-tall" style={{ background: b.color }}>
-            <div className="banner-copy">
-              <div className="chips">
-                <span className="chip">{b.org}</span>
-                {b.tags.map((t) => (
-                  <span key={t} className="chip">
-                    {t}
-                  </span>
-                ))}
-              </div>
-              <h2>{b.title}</h2>
-              <p>{b.summary}</p>
-              <span className="circle" aria-hidden="true">
-                →
-              </span>
+          <ExpandBanner
+            key={b.slug}
+            color={b.color}
+            chips={[b.org, ...b.tags]}
+            title={b.title}
+            teaser={b.tagline}
+          >
+            <p className="banner-summary">{b.summary}</p>
+            <div className="actions">
+              <Link className="ghost-btn ghost-solid" to={`/blogs/${b.slug}`}>
+                Read the write-up
+              </Link>
+              {b.links.map((l) => (
+                <a key={l.href} className="ghost-btn" href={l.href} target="_blank" rel="noreferrer">
+                  {l.label} ↗
+                </a>
+              ))}
             </div>
-          </Link>
+          </ExpandBanner>
         ))}
       </div>
     </>

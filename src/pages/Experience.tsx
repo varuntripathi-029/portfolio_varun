@@ -1,6 +1,5 @@
-import { Link } from 'react-router-dom'
 import { experience, profile, skills } from '../data'
-import { Timeline } from '../components'
+import { ExpandCard, Timeline } from '../components'
 
 export default function Experience() {
   return (
@@ -14,19 +13,14 @@ export default function Experience() {
         </a>
       </section>
 
-      <Link to="/projects" className="banner" style={{ background: '#5560a6' }}>
-        <div className="banner-copy">
-          <div className="chips">
-            <span className="chip">Now</span>
-            <span className="chip">Agentic AI</span>
-          </div>
-          <h2>AI + QA engineer at TIFIN AI</h2>
-          <p>Agentic infrastructure for wealth management, backed by J.P. Morgan.</p>
-          <span className="circle" aria-hidden="true">
-            →
-          </span>
+      <section className="banner now" style={{ background: '#5560a6' }}>
+        <div className="chips">
+          <span className="chip">Now</span>
+          <span className="chip">Agentic AI</span>
         </div>
-      </Link>
+        <h2>AI + QA engineer at TIFIN AI</h2>
+        <p>Agentic infrastructure for wealth management, backed by J.P. Morgan.</p>
+      </section>
 
       <section className="card span-2">
         <h2 className="card-title">Experience</h2>
@@ -39,17 +33,18 @@ export default function Experience() {
         />
       </section>
 
-      <section className="card span-2">
-        <h2 className="card-title">What I work with</h2>
-        <dl className="skills">
-          {skills.map((s) => (
-            <div key={s.group} className="skill-row">
-              <dt>{s.group}</dt>
-              <dd>{s.items}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
+      <div className="span-2">
+        <ExpandCard title="What I work with" badge={skills.map((s) => s.group).join(' · ')}>
+          <dl className="skills">
+            {skills.map((s) => (
+              <div key={s.group} className="skill-row">
+                <dt>{s.group}</dt>
+                <dd>{s.items}</dd>
+              </div>
+            ))}
+          </dl>
+        </ExpandCard>
+      </div>
     </div>
   )
 }
