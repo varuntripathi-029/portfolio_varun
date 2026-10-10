@@ -34,6 +34,8 @@ Layout and interaction feel are modelled on `dhananjaychopra.in`: a rounded left
 | `src/Pager.tsx` | Horizontal section pager (the scroll behavior) |
 | `src/Search.tsx`, `src/searchEngine.ts` | In-browser semantic search overlay and its engine |
 | `scripts/build-index.mjs` | Builds `public/search-index.json` (content chunks + embeddings) |
+| `src/Terminal.tsx`, `src/quant.ts` | The Paper Hands quant terminal (UI) and its backtest engine |
+| `scripts/fetch-nifty.mjs` | Downloads the Nifty 50 index-fund NAV history to `public/data/nifty50.json` |
 | `src/components.tsx` | `Collapse`, `Timeline`, `ExpandCard`, `ExpandBanner`, `Shot`, `Reel`, `Words`, `PageHead` |
 | `src/pages/*.tsx` | One component per section, plus `BlogPost` (the only separate route) |
 | `src/styles.css` | Every style. Tokens at the top, later blocks override earlier ones |
@@ -182,6 +184,23 @@ A spotlight-style overlay (sidebar button, `/` or Cmd/Ctrl+K) that searches the 
 - **Fallbacks:** keyword-only matching shows instantly while the model downloads, and stays if the model cannot load.
 - **Transparency:** each hit shows its similarity score and the matched words, and the panel states that everything runs locally.
 - **File name caveat:** `search.ts` and `Search.tsx` collide on case-insensitive filesystems, so the engine is `searchEngine.ts`.
+
+## 9c. Paper Hands (the quant terminal)
+
+An optional "game" reached from a collapsed card named **Paper Hands** (kicker "or play") under "Find me" on the Experience section. The card expands to a short overview and an "Enter the arena" button, which dispatches a `open-lab` window event; `App.tsx` listens and mounts `Terminal.tsx` as a full-screen overlay.
+
+- **Premise:** "Can your trading rule beat buy-and-hold after charges and tax?" The card copy is playful; the terminal itself is deliberately serious.
+- **Data:** real daily NAVs of an index fund tracking the Nifty 50, 2013 to 2026, from AMFI via mfapi.in. It is pulled once by `npm run data` into `public/data/nifty50.json` (about 70 KB). No API, key or network call is made at runtime. Re-run the script to refresh it.
+- **Engine (`src/quant.ts`):** pure functions, long-only all-in/all-out at the close. Rules: SMA crossover and momentum. Costs: Rs 20 plus 0.13% per trade, modelled as an index ETF. Tax: 20% short-term, 12.5% long-term above Rs 1.25 lakh per financial year, 4% cess, losses not carried forward. Metrics: final value after tax, CAGR, volatility, Sharpe (6.5% risk-free), max drawdown, round trips, charges, tax. Rolling 3-year windows (overlapping, so not independent) give the win rates before and after costs.
+- **Verified:** buy-and-hold with no costs equals the price ratio exactly; costs and tax only ever reduce value; worked LTCG and STCG examples match by hand.
+- **Look:** two real Windows terminal themes, switchable with `THEME PS|WT`: the PowerShell blue (`#012456` on `#EEEDF0`) and Windows Terminal "Campbell" black, with Campbell's bright ANSI colors for gains (green), losses (red), labels (yellow) and headings (cyan). Flat, hairline panels, mono type, inverse-video for selected items. Campbell's purple is intentionally not used.
+- **Learnability:** the lab opens already running a demo (SMA 20/100 on the 2020 crash). Everything has a clickable control; typing is optional and autocompletes. A plain-language verdict sentence sits under the numbers, a 3-step coach strip runs on first visit (`localStorage` key `lab-tour`), and after two misses in a period a hint appears that comes from the engine's own results.
+- **Honesty:** the footer lists every assumption and says "past data, not advice".
+
+## 9d. Toggles and card size
+
+- Every expand toggle (cards, tiles, timeline rows) is the shared `WheelToggle`: on hover the circle rolls left half a turn and a label ("Expand" or "Collapse") opens where it was. The roll is a transform, so the card's layout never shifts, and the label never appears on touch devices.
+- **Do not shrink cards to fit a short window.** Tiles keep the reference's generous size. A section taller than the screen scrolls inside itself before handing over to the next section; that is the intended fallback, not a bug to fix by compacting.
 
 ## 10. Hard-won rules (do not repeat these bugs)
 
