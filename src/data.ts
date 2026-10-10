@@ -80,7 +80,7 @@ export const projects: Project[] = [
     summary:
       'Crawls career pages, ATS boards, RSS feeds and news APIs to find job postings and score company hiring momentum. The score is deterministic; no model writes it.',
     tags: ['AI platform', 'In production'],
-    color: 'var(--c-indigo)',
+    color: 'var(--c-blue)',
     stack: ['FastAPI', 'PostgreSQL / pgvector', 'Celery', 'Groq · Llama-3.1-8B', 'React 19'],
     facts: [
       'Gates an LLM extractor behind a rule pre-filter and a small classifier, cutting inference spend 12x at 0.96 mean confidence',
@@ -150,7 +150,7 @@ export const projects: Project[] = [
     summary:
       'Fuses 5 live data sources into a gridded forecast, with multi-agent workflows attributing pollution to its sources.',
     tags: ['Forecasting', 'Multi-agent'],
-    color: 'var(--c-violet)',
+    color: 'var(--c-ochre)',
     stack: ['PyTorch ConvLSTM', 'LangGraph', 'Groq', 'pytest'],
     facts: [
       'Trained on 2,163 hourly 11-channel tensors across 2,805 grid cells',
@@ -227,7 +227,7 @@ export const blogs: Blog[] = [
     org: 'Upstox',
     summary:
       'A decision layer on top of Upstox’s existing reports: tax if you sold today, what waiting saves, and how much of a gain survives charges. Includes a working demo.',
-    color: 'var(--c-indigo)',
+    color: 'var(--c-blue)',
     tags: ['Fintech', 'Working demo'],
     sections: [
       {
@@ -307,7 +307,7 @@ export const blogs: Blog[] = [
     org: 'MX_rating',
     summary:
       'The thinking behind a score for how reliably AI agents can use a website: what to measure, what to keep deterministic, and what to cut.',
-    color: 'var(--c-violet)',
+    color: 'var(--c-ochre)',
     tags: ['AI', 'Systems design'],
     sections: [
       {
@@ -337,7 +337,7 @@ export const blogs: Blog[] = [
     org: 'Meesho',
     summary:
       'Where a 145 bps contribution-margin hit came from, and a two-layer system for scaling Meesho Mall without rebuilding the core experience.',
-    color: 'var(--c-magenta)',
+    color: 'var(--c-burgundy)',
     tags: ['E-commerce', 'Unit economics'],
     sections: [
       {

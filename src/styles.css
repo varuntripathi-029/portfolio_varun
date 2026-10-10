@@ -13,13 +13,13 @@
   --shadow-lift: 0 2px 4px rgba(22, 21, 15, 0.05), 0 16px 40px rgba(22, 21, 15, 0.08);
   --banner-shade: rgba(0, 0, 0, 0);
   --dot: #bdbbb2;
-  --c-indigo: #425094;
-  --c-emerald: #2e7b51;
+  --c-blue: #3d5a80;
+  --c-emerald: #2f7a52;
   --c-vermilion: #a85444;
-  --c-violet: #6d4f8c;
-  --c-magenta: #9a4a6e;
+  --c-ochre: #8f6618;
+  --c-burgundy: #8a3a4c;
   --c-teal: #2b6f78;
-  --glow: rgba(68, 82, 224, 0.1);
+  --glow: rgba(60, 50, 30, 0.06);
   --tint: 8%;
 
   --radius: 28px;
@@ -35,30 +35,29 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  /* neutrals share the indigo hue (~235deg) so every surface reads as one family */
-  --bg: #0d0e15;
-  --panel: #141622;
-  --raised: #1c1f31;
-  --line: #272b40;
-  --ink: #eceefa;
-  --ink-muted: #a8adc6;
-  --ink-soft: #7a7f9a;
-  --btn: #eceefa;
-  --btn-ink: #0d0e15;
-  --dot: #4b5070;
-  --shadow: 0 1px 2px rgba(2, 3, 10, 0.4), 0 8px 24px rgba(2, 3, 10, 0.3);
-  --shadow-lift: 0 2px 4px rgba(2, 3, 10, 0.45), 0 18px 44px rgba(2, 3, 10, 0.5);
+  /* warm graphite: neutral with a slight yellow-brown bias, like ink on paper stock */
+  --bg: #141311;
+  --panel: #1b1a17;
+  --raised: #24221e;
+  --line: #302e29;
+  --ink: #ece9e1;
+  --ink-muted: #aaa69b;
+  --ink-soft: #7c786e;
+  --btn: #ece9e1;
+  --btn-ink: #141311;
+  --dot: #55524a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.45), 0 18px 44px rgba(0, 0, 0, 0.5);
   --banner-shade: rgba(0, 0, 0, 0);
-  --glow: rgba(125, 140, 255, 0.09);
-  --tint: 14%;
-  /* accents: same hues, a touch less chroma and lightness so they sit on the dark
-     surface instead of glowing off it */
-  --c-indigo: #384580;
-  --c-emerald: #276a46;
-  --c-vermilion: #8f4637;
-  --c-violet: #5d4478;
-  --c-magenta: #834060;
-  --c-teal: #245c65;
+  --glow: rgba(255, 238, 210, 0.06);
+  --tint: 12%;
+  /* pigment-like accents: denim, moss, terracotta, ochre, oxblood, petrol */
+  --c-blue: #34506f;
+  --c-emerald: #3a6a49;
+  --c-vermilion: #98483a;
+  --c-ochre: #86641f;
+  --c-burgundy: #7a3243;
+  --c-teal: #2b6266;
 }
 
 * {
@@ -341,7 +340,7 @@ button {
 }
 
 .banner::after {
-  --glow: rgba(255, 255, 255, 0.22);
+  --glow: rgba(255, 255, 255, 0.14);
 }
 
 .card:hover::after,
@@ -350,7 +349,7 @@ button {
 }
 
 .card.expand {
-  --accent: var(--c-indigo);
+  --accent: var(--c-blue);
 }
 
 .card.expand:hover,
@@ -475,7 +474,6 @@ h2.card-title {
   justify-content: center;
   gap: 8px;
   min-height: 340px;
-  background: radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--c-indigo) 9%, transparent), transparent 60%), var(--bg);
 }
 
 .hello {
@@ -1229,9 +1227,6 @@ h2.card-title {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
 }
 
-:root[data-theme='dark'] .hero {
-  background: radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--c-indigo) 20%, transparent), transparent 60%), var(--bg);
-}
 
 :root[data-theme='dark'] .badge,
 :root[data-theme='dark'] .skill-chip {
@@ -1411,35 +1406,35 @@ h2.card-title {
 .reel-chip,
 .skill-chip {
   --h: 262;
-  background: color-mix(in srgb, #4452e0 14%, transparent);
-  color: #3a43b0;
-  border: 1px solid color-mix(in srgb, #4452e0 28%, transparent);
-  background: oklch(94% 0.04 var(--h));
-  color: oklch(40% 0.15 var(--h));
-  border: 1px solid oklch(85% 0.07 var(--h));
+  background: color-mix(in srgb, #3d5a80 14%, transparent);
+  color: #2f4766;
+  border: 1px solid color-mix(in srgb, #3d5a80 28%, transparent);
+  background: oklch(94% 0.035 var(--h));
+  color: oklch(40% 0.12 var(--h));
+  border: 1px solid oklch(85% 0.06 var(--h));
   transition: background-color 0.35s var(--ease), color 0.35s var(--ease),
     border-color 0.35s var(--ease), transform 0.4s var(--ease);
 }
 
 .reel-chip:hover,
 .skill-chip:hover {
-  background: oklch(50% 0.19 var(--h));
+  background: oklch(50% 0.14 var(--h));
   color: #fff;
-  border-color: oklch(50% 0.19 var(--h));
+  border-color: oklch(50% 0.14 var(--h));
 }
 
 :root[data-theme='dark'] .reel-chip,
 :root[data-theme='dark'] .skill-chip {
-  background: oklch(31% 0.075 var(--h));
-  color: oklch(87% 0.08 var(--h));
-  border-color: oklch(43% 0.1 var(--h));
+  background: oklch(31% 0.055 var(--h));
+  color: oklch(87% 0.07 var(--h));
+  border-color: oklch(43% 0.08 var(--h));
 }
 
 :root[data-theme='dark'] .reel-chip:hover,
 :root[data-theme='dark'] .skill-chip:hover {
-  background: oklch(58% 0.17 var(--h));
-  color: #0d0e15;
-  border-color: oklch(58% 0.17 var(--h));
+  background: oklch(62% 0.13 var(--h));
+  color: #141311;
+  border-color: oklch(62% 0.13 var(--h));
 }
 
 /* ---- expanded tile content: stack and results side by side ---- */
@@ -1653,14 +1648,14 @@ h2.card-title {
 .ph-bars i {
   flex: 1;
   border-radius: 6px 6px 0 0;
-  background: color-mix(in srgb, var(--c-indigo) 30%, #fff);
+  background: color-mix(in srgb, var(--c-blue) 30%, #fff);
 }
 
 .ph-bars i:nth-child(1) { height: 30%; }
 .ph-bars i:nth-child(2) { height: 52%; }
 .ph-bars i:nth-child(3) { height: 44%; }
 .ph-bars i:nth-child(4) { height: 74%; }
-.ph-bars i:nth-child(5) { height: 100%; background: var(--c-indigo); }
+.ph-bars i:nth-child(5) { height: 100%; background: var(--c-blue); }
 
 @media (hover: hover) {
   .banner:not(.is-open):hover .tile-art {

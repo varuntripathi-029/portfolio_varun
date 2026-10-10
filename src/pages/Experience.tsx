@@ -45,7 +45,7 @@ export default function Experience() {
       </section>
 
       <div className="side-stack">
-        <section className="banner now" style={{ background: 'var(--c-indigo)' }}>
+        <section className="banner now" style={{ background: 'var(--c-blue)' }}>
           <div className="chips">
             <span className="chip">Now</span>
             <span className="chip">Agentic AI</span>
