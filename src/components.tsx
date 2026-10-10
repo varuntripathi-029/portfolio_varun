@@ -1,5 +1,5 @@
 import { useId, useState, type CSSProperties, type ReactNode } from 'react'
-import { accentAt } from './palette'
+import { accentAt, hueAt } from './palette'
 
 type Accented = CSSProperties & { '--accent'?: string }
 
@@ -180,7 +180,7 @@ export function Reel({ items }: { items: string[] }) {
   const row = (hidden: boolean) => (
     <ul className="reel-row" aria-hidden={hidden || undefined}>
       {items.map((t, i) => (
-        <li key={t} className="reel-chip" style={{ '--accent': accentAt(i) } as Accented}>
+        <li key={t} className="reel-chip" style={{ '--h': hueAt(i) } as CSSProperties}>
           {t}
         </li>
       ))}
@@ -191,6 +191,35 @@ export function Reel({ items }: { items: string[] }) {
       <div className="reel-track">
         {row(false)}
         {row(true)}
+      </div>
+    </div>
+  )
+}
+
+export function Shot({ src, children }: { src?: string; children?: ReactNode }) {
+  const [loaded, setLoaded] = useState(false)
+  return (
+    <div className="shot">
+      <div className="shot-bar" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+      </div>
+      <div className="shot-view">
+        {src ? (
+          <img
+            src={src}
+            alt=""
+            decoding="async"
+            className={loaded ? 'is-loaded' : undefined}
+            onLoad={() => setLoaded(true)}
+            ref={(el) => {
+              if (el?.complete && el.naturalWidth > 0) setLoaded(true)
+            }}
+          />
+        ) : (
+          children
+        )}
       </div>
     </div>
   )
