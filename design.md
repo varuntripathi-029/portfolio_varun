@@ -91,6 +91,17 @@ Sections sit side by side in a horizontal flex track (`.pager`). The user scroll
 - **First load:** a deep link such as `/blogs` positions the track instantly with no slide.
 - **Mobile (<= 760px):** the pager is disabled and sections stack vertically; navigation scrolls into view.
 
+## 5b. Scroll consistency (read before touching the pager)
+
+Every vertical scroll, on every input, ends in the same right-to-left glide:
+
+- **Wheel and trackpad:** a section that fits the screen moves on at once. A taller section scrolls inside itself, and once its end is reached a little more scrolling in the same direction (`OVERSCROLL`, 110 px) moves on, so the user never needs a separate gesture.
+- **Touch (phones and tablets):** a vertical swipe of at least 56 px moves to the next or previous section. If the section is taller than the screen, only a swipe that starts at its end moves on, so reading is never interrupted. Horizontal swipes pan the track natively and snap.
+- **Keys, dots and the sidebar** all just change the URL, which animates the track.
+- **Phones use the same pager.** Below 760 px the sidebar becomes a one-row top bar, the section fills the rest of the screen (`100dvh`), and the outbound links live in the Find me card.
+- **Blog write-ups** (`/blogs/:slug`) are the one normal scrolling page; they arrive from the right with the same easing.
+- Do not special-case a section to scroll differently. If a section feels inconsistent, its content is taller than the screen and the inner-scroll fallback is doing its job.
+
 ## 6. Color theory
 
 ### Principle
@@ -194,6 +205,15 @@ A spotlight-style overlay (sidebar button, `/` or Cmd/Ctrl+K) that searches the 
 - **Fallbacks:** keyword-only matching shows instantly while the model downloads, and stays if the model cannot load.
 - **Transparency:** each hit shows its similarity score and the matched words, and the panel states that everything runs locally.
 - **File name caveat:** `search.ts` and `Search.tsx` collide on case-insensitive filesystems, so the engine is `searchEngine.ts`.
+
+## 9b2. Hackathons
+
+Colored tiles like Projects and Blogs, packed by `Masonry` (`[3, 3, 3, 3, 6]`), with a results strip above them.
+
+- Each tile is `ExpandBanner` with a colored fill (podium in terracotta, then blue, teal, ochre), a solid white result chip, the organiser's one-liner, and a **ticket** (`Pass` in `Hackathons.tsx`) on the right: the organiser's logo, the number worth remembering in Bricolage Grotesque, and a caption.
+- Organiser logos live in `public/logos/` and are used only to identify the event: Zoho Catalyst and Economic Times (from their site icons), Redrob AI, and LatentCode (its own `favicon.svg`). They are trademarks of their owners.
+- A new hackathon needs `org`, `logo`, `line` and `stat` in `src/data.ts` next to the existing fields.
+- **Type:** Bricolage Grotesque (`--font-poster`) is used only for hackathon numbers and the strip. Do not spread it to other sections.
 
 ## 9c. Paper Hands (the quant terminal)
 
