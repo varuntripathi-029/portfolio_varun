@@ -8,8 +8,26 @@ import Blogs from './pages/Blogs'
 import BlogPost from './pages/BlogPost'
 import Leadership from './pages/Leadership'
 
+type Theme = 'light' | 'dark'
+
+function currentTheme(): Theme {
+  return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+}
+
 function Sidebar() {
   const [copied, setCopied] = useState(false)
+  const [theme, setTheme] = useState<Theme>(currentTheme)
+
+  const toggleTheme = () => {
+    const next: Theme = theme === 'dark' ? 'light' : 'dark'
+    document.documentElement.dataset.theme = next
+    try {
+      localStorage.setItem('theme', next)
+    } catch {
+      /* storage can be blocked; the theme still applies for this visit */
+    }
+    setTheme(next)
+  }
 
   const copyEmail = async () => {
     try {
@@ -54,6 +72,17 @@ function Sidebar() {
           {copied ? 'Copied' : 'Copy email'}
         </button>
       </div>
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={toggleTheme}
+        aria-pressed={theme === 'dark'}
+      >
+        <span className="theme-track" aria-hidden="true">
+          <span className="theme-thumb" />
+        </span>
+        {theme === 'dark' ? 'Dark' : 'Light'}
+      </button>
     </aside>
   )
 }
@@ -67,12 +96,14 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  const location = useLocation()
   return (
     <div className="shell">
       <ScrollToTop />
       <Sidebar />
       <main className="main">
-        <Routes>
+        <div className="page" key={location.pathname}>
+        <Routes location={location}>
           <Route path="/" element={<Experience />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/hackathons" element={<Hackathons />} />
@@ -81,6 +112,7 @@ export default function App() {
           <Route path="/leadership" element={<Leadership />} />
           <Route path="*" element={<Experience />} />
         </Routes>
+        </div>
       </main>
     </div>
   )
