@@ -19,7 +19,7 @@ export default function Blogs() {
           >
             <p className="banner-summary">{b.summary}</p>
             <div className="actions">
-              <Link className="ghost-btn ghost-solid" to={`/blogs/${b.slug}`}>
+              <Link viewTransition className="ghost-btn ghost-solid" to={`/blogs/${b.slug}`}>
                 Read the write-up
               </Link>
               {b.links.map((l) => (

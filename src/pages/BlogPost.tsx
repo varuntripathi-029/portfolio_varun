@@ -18,7 +18,7 @@ export default function BlogPost() {
 
   return (
     <article className="post">
-      <Link to="/blogs" className="back">
+      <Link to="/blogs" viewTransition className="back">
         ← All blogs
       </Link>
       <header className="banner post-head" style={{ background: post.color }}>
