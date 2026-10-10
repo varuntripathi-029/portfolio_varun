@@ -263,7 +263,6 @@ export const blogs: Blog[] = [
     ],
     links: [
       { label: 'Live demo', href: 'https://upstox-ass.vercel.app/' },
-      { label: 'GitHub', href: 'https://github.com/varuntripathi-029/upstox_ass' },
     ],
   },
   {

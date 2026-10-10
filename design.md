@@ -180,7 +180,7 @@ Captured through Claude in Chrome from the deployed sites, resized to 1100px wid
 
 ## 11. How to change things
 
-- **Add a project:** add an object to `projects` in `src/data.ts` (slug, title, tagline, summary, tags, color variable, stack, facts, links). Every project card must link its GitHub repo (label `GitHub`), plus a live site when one exists. Hackathon entries carry a `repo` field too. Add `shot` (path in `public/shots/`) or `diagram` or neither (stack placeholder). Recheck the section still fits one screen.
+- **Add a project:** add an object to `projects` in `src/data.ts` (slug, title, tagline, summary, tags, color variable, stack, facts, links). Every project card must link its GitHub repo (label `GitHub`), plus a live site when one exists. Hackathon entries carry a `repo` field too. Blog entries do not link repos; they link the live write-up or demo only. Add `shot` (path in `public/shots/`) or `diagram` or neither (stack placeholder). Recheck the section still fits one screen.
 - **Add a blog:** add to `blogs` in `src/data.ts` with a `metric` for the placeholder. The write-up page is generated from `sections`.
 - **Add a section:** add a page component, then an entry in the `sections` array in `src/App.tsx`. The pager, sidebar, dots and URLs follow automatically. Give it its own accent in `palette.ts` order if needed.
 - **Change colors:** edit the `--c-*` tokens in both the light and dark blocks of `styles.css`. Keep white text contrast and keep dark variants less chromatic than light.
