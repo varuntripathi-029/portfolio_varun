@@ -77,7 +77,7 @@ export const projects: Project[] = [
     summary:
       'Crawls career pages, ATS boards, RSS feeds and news APIs to find job postings and score company hiring momentum. The score is deterministic; no model writes it.',
     tags: ['AI platform', 'In production'],
-    color: '#4452e0',
+    color: 'var(--c-indigo)',
     stack: ['FastAPI', 'PostgreSQL / pgvector', 'Celery', 'Groq · Llama-3.1-8B', 'React 19'],
     facts: [
       'Gates an LLM extractor behind a rule pre-filter and a small classifier, cutting inference spend 12x at 0.96 mean confidence',
@@ -93,7 +93,7 @@ export const projects: Project[] = [
     summary:
       'Scores a website on how well AI agents can crawl, understand and act on it. A rule engine produces a reproducible score; an LLM only narrates the evidence.',
     tags: ['SaaS', 'Agents'],
-    color: '#0f8456',
+    color: 'var(--c-emerald)',
     stack: ['FastAPI', 'Playwright', 'PostgreSQL', 'Groq · Llama-3.3-70B', 'Next.js 16'],
     facts: [
       '9-stage workflow, ~13 deterministic checks across 6 dimensions',
@@ -108,7 +108,7 @@ export const projects: Project[] = [
     summary:
       'RAG API that analyzes Indian employment contracts against constitutional law, with streamed answers and OCR for scanned documents.',
     tags: ['RAG', 'Backend'],
-    color: '#d03e25',
+    color: 'var(--c-vermilion)',
     stack: ['FastAPI', 'FAISS', 'Groq LPUs · SSE', 'Redis', 'PaddleOCR'],
     facts: [
       'TTFT cut ~90x by moving to Groq with SSE streaming',
@@ -127,7 +127,7 @@ export const projects: Project[] = [
     summary:
       'Fuses 5 live data sources into a gridded forecast, with multi-agent workflows attributing pollution to its sources.',
     tags: ['Forecasting', 'Multi-agent'],
-    color: '#7b4be0',
+    color: 'var(--c-violet)',
     stack: ['PyTorch ConvLSTM', 'LangGraph', 'Groq', 'pytest'],
     facts: [
       'Trained on 2,163 hourly 11-channel tensors across 2,805 grid cells',
@@ -182,6 +182,7 @@ export const honors = [
 
 export type Blog = {
   slug: string
+  metric: { value: string; label: string }
   title: string
   tagline: string
   org: string
@@ -195,12 +196,13 @@ export type Blog = {
 export const blogs: Blog[] = [
   {
     slug: 'upstox-tax-cost-insights',
+    metric: { value: '25 rules', label: '158 tests behind the tax engine' },
     title: 'Know what you keep, before you sell',
     tagline: 'Tax if you sold today, and what you actually keep',
     org: 'Upstox',
     summary:
       'A decision layer on top of Upstox’s existing reports: tax if you sold today, what waiting saves, and how much of a gain survives charges. Includes a working demo.',
-    color: '#4452e0',
+    color: 'var(--c-indigo)',
     tags: ['Fintech', 'Working demo'],
     sections: [
       {
@@ -227,12 +229,13 @@ export const blogs: Blog[] = [
   },
   {
     slug: 'upstox-half-the-users',
+    metric: { value: '5.2M → 2.25M', label: 'NSE active clients, revenue up 25%' },
     title: 'Half the users, 25% more revenue',
     tagline: 'Why clients fell while revenue grew, and what to build next',
     org: 'Upstox',
     summary:
       'Why NSE active clients fell from 5.2M to 2.25M while revenue rose 25%, and which segment is worth owning next.',
-    color: '#0f8456',
+    color: 'var(--c-emerald)',
     tags: ['Fintech', 'Analysis'],
     sections: [
       {
@@ -252,11 +255,12 @@ export const blogs: Blog[] = [
   },
   {
     slug: 'whatsapp-pay',
+    metric: { value: '500M → <1%', label: 'users vs UPI transaction share' },
     title: 'WhatsApp Pay: 500M users, under 1% of UPI',
     tagline: 'Why distribution hasn’t turned into payments',
     org: 'WhatsApp',
     summary: 'Why a 500M-user app holds under 1% of UPI transactions in India, and a payments strategy built on Click-to-WhatsApp Ads.',
-    color: '#d03e25',
+    color: 'var(--c-vermilion)',
     tags: ['Fintech', 'Analysis'],
     sections: [
       {
@@ -272,12 +276,13 @@ export const blogs: Blog[] = [
   },
   {
     slug: 'mx-rating-study',
+    metric: { value: '6 dimensions', label: 'one deterministic, contestable score' },
     title: 'Scoring the web for AI agents',
     tagline: 'What to measure, what to keep deterministic, what to cut',
     org: 'MX_rating',
     summary:
       'The thinking behind a score for how reliably AI agents can use a website: what to measure, what to keep deterministic, and what to cut.',
-    color: '#7b4be0',
+    color: 'var(--c-violet)',
     tags: ['AI', 'Systems design'],
     sections: [
       {
@@ -301,12 +306,13 @@ export const blogs: Blog[] = [
   },
   {
     slug: 'meesho-valmo',
+    metric: { value: '145 bps', label: 'contribution-margin hit, traced' },
     title: 'Mall scales, Valmo predicts',
     tagline: 'Fixing a 145 bps margin hit without rebuilding Mall',
     org: 'Meesho',
     summary:
       'Where a 145 bps contribution-margin hit came from, and a two-layer system for scaling Meesho Mall without rebuilding the core experience.',
-    color: '#c93b86',
+    color: 'var(--c-magenta)',
     tags: ['E-commerce', 'Unit economics'],
     sections: [
       {
