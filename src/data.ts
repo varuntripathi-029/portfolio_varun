@@ -58,6 +58,7 @@ export const skills: { group: string; items: string }[] = [
 export type Project = {
   slug: string
   title: string
+  tagline: string
   summary: string
   tags: string[]
   color: string
@@ -70,7 +71,8 @@ export type Project = {
 export const projects: Project[] = [
   {
     slug: 'hiresignal',
-    title: 'HireSignal: hiring intelligence from 886+ public sources',
+    title: 'HireSignal',
+    tagline: 'Hiring momentum from 886+ public sources, scored deterministically',
     summary:
       'Crawls career pages, ATS boards, RSS feeds and news APIs to find job postings and score company hiring momentum. The score is deterministic; no model writes it.',
     tags: ['AI platform', 'In production'],
@@ -85,7 +87,8 @@ export const projects: Project[] = [
   },
   {
     slug: 'mx-rating',
-    title: 'MX_rating: how reliably can an AI agent use your site?',
+    title: 'MX_rating',
+    tagline: 'A reproducible score for how agent-friendly a website is',
     summary:
       'Scores a website on how well AI agents can crawl, understand and act on it. A rule engine produces a reproducible score; an LLM only narrates the evidence.',
     tags: ['SaaS', 'Agents'],
@@ -99,7 +102,8 @@ export const projects: Project[] = [
   },
   {
     slug: 'legal-contract-analyzer',
-    title: 'Legal Contract Analyzer: first token in 0.2s instead of 26.7s',
+    title: 'Legal Contract Analyzer',
+    tagline: 'RAG over Indian employment contracts, first token in 0.2s',
     summary:
       'RAG API that analyzes Indian employment contracts against constitutional law, with streamed answers and OCR for scanned documents.',
     tags: ['RAG', 'Backend'],
@@ -117,7 +121,8 @@ export const projects: Project[] = [
   },
   {
     slug: 'urbanair-intel',
-    title: 'UrbanAir Intel: a 1 km air-quality twin of Delhi NCR',
+    title: 'UrbanAir Intel',
+    tagline: 'A 1 km air-quality twin of Delhi NCR',
     summary:
       'Fuses 5 live data sources into a gridded forecast, with multi-agent workflows attributing pollution to its sources.',
     tags: ['Forecasting', 'Multi-agent'],
@@ -177,6 +182,7 @@ export const honors = [
 export type Blog = {
   slug: string
   title: string
+  tagline: string
   org: string
   summary: string
   color: string
@@ -189,6 +195,7 @@ export const blogs: Blog[] = [
   {
     slug: 'upstox-tax-cost-insights',
     title: 'Know what you keep, before you sell',
+    tagline: 'Tax if you sold today, and what you actually keep',
     org: 'Upstox',
     summary:
       'A decision layer on top of Upstox’s existing reports: tax if you sold today, what waiting saves, and how much of a gain survives charges. Includes a working demo.',
@@ -220,6 +227,7 @@ export const blogs: Blog[] = [
   {
     slug: 'upstox-half-the-users',
     title: 'Half the users, 25% more revenue',
+    tagline: 'Why clients fell while revenue grew, and what to build next',
     org: 'Upstox',
     summary:
       'Why NSE active clients fell from 5.2M to 2.25M while revenue rose 25%, and which segment is worth owning next.',
@@ -244,6 +252,7 @@ export const blogs: Blog[] = [
   {
     slug: 'whatsapp-pay',
     title: 'WhatsApp Pay: 500M users, under 1% of UPI',
+    tagline: 'Why distribution hasn’t turned into payments',
     org: 'WhatsApp',
     summary: 'Why a 500M-user app holds under 1% of UPI transactions in India, and a payments strategy built on Click-to-WhatsApp Ads.',
     color: '#b05f4c',
@@ -263,6 +272,7 @@ export const blogs: Blog[] = [
   {
     slug: 'mx-rating-study',
     title: 'Scoring the web for AI agents',
+    tagline: 'What to measure, what to keep deterministic, what to cut',
     org: 'MX_rating',
     summary:
       'The thinking behind a score for how reliably AI agents can use a website: what to measure, what to keep deterministic, and what to cut.',
@@ -291,6 +301,7 @@ export const blogs: Blog[] = [
   {
     slug: 'meesho-valmo',
     title: 'Mall scales, Valmo predicts',
+    tagline: 'Fixing a 145 bps margin hit without rebuilding Mall',
     org: 'Meesho',
     summary:
       'Where a 145 bps contribution-margin hit came from, and a two-layer system for scaling Meesho Mall without rebuilding the core experience.',
