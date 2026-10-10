@@ -78,7 +78,7 @@ export const projects: Project[] = [
     title: 'HireSignal',
     tagline: '886+ sources, one deterministic score, zero vibes',
     summary:
-      'Crawls career pages, ATS boards, RSS feeds and news APIs to find job postings and score company hiring momentum. The score is deterministic; no model writes it.',
+      'Reads 886+ public sources (career pages, ATS boards, RSS feeds, news APIs) so you do not have to, finds the job postings and scores how hard each company is hiring. The score comes from a plain deterministic function. No model gets to write it, which is the whole point.',
     tags: ['AI platform', 'In production'],
     color: 'var(--c-blue)',
     stack: ['FastAPI', 'PostgreSQL / pgvector', 'Celery', 'Groq · Llama-3.1-8B', 'React 19'],
@@ -98,7 +98,7 @@ export const projects: Project[] = [
     title: 'DevAgent Remote',
     tagline: 'Your laptop does the coding. Your phone holds the leash.',
     summary:
-      'A control plane for CLI coding agents. The laptop dials out to a relay, so no home ports are opened, and the phone starts tasks, watches live output, approves tool calls and reverts changes.',
+      'Your laptop runs the coding agents and your phone supervises them. The laptop dials out to a relay, so nothing at home is exposed, and from the phone you start tasks, watch the output scroll by, approve tool calls and hit revert when an agent gets creative.',
     tags: ['Developer tools', 'Mobile'],
     color: 'var(--c-teal)',
     stack: ['FastAPI relay', 'asyncio worker', 'Expo / React Native', 'GitHub OAuth + JWT'],
@@ -116,7 +116,7 @@ export const projects: Project[] = [
     title: 'MX_rating',
     tagline: 'Can an AI agent actually use your site? A score you can argue with.',
     summary:
-      'Scores a website on how well AI agents can crawl, understand and act on it. A rule engine produces a reproducible score; an LLM only narrates the evidence.',
+      'Paste a URL and find out whether an AI agent could actually use the site. A rule engine produces a score you can reproduce; an LLM is only allowed to narrate the evidence, like a commentator who does not get to change the result.',
     tags: ['SaaS', 'Agents'],
     color: 'var(--c-emerald)',
     stack: ['FastAPI', 'Playwright', 'PostgreSQL', 'Groq · Llama-3.3-70B', 'Next.js 16'],
@@ -135,7 +135,7 @@ export const projects: Project[] = [
     title: 'Legal Contract Analyzer',
     tagline: 'Contracts nobody reads, answered in 0.2s instead of 26.7s',
     summary:
-      'RAG API that analyzes Indian employment contracts against constitutional law, with streamed answers and OCR for scanned documents.',
+      'A RAG API that reads Indian employment contracts so you do not have to, checks them against constitutional law, streams the answer as it goes and will even OCR the scanned ones.',
     tags: ['RAG', 'Backend'],
     color: 'var(--c-vermilion)',
     stack: ['FastAPI', 'FAISS', 'Groq LPUs · SSE', 'Redis', 'PaddleOCR'],
@@ -155,7 +155,7 @@ export const projects: Project[] = [
     title: 'UrbanAir Intel',
     tagline: 'Delhi’s air, one square kilometre at a time',
     summary:
-      'Fuses 5 live data sources into a gridded forecast, with multi-agent workflows attributing pollution to its sources.',
+      'Fuses 5 live data sources into a 1 km grid of Delhi NCR, forecasts what the air does next, and uses multi-agent workflows to point a finger at where the pollution came from.',
     tags: ['Forecasting', 'Multi-agent'],
     color: 'var(--c-ochre)',
     stack: ['PyTorch ConvLSTM', 'LangGraph', 'Groq', 'pytest'],
@@ -183,7 +183,7 @@ export const hackathons = [
     stat: { value: '10', label: 'FastAPI microservices on real NCRB data' },
     repo: 'https://github.com/varuntripathi-029/crime-intelligence-platform',
     detail:
-      '10 FastAPI microservices on real NCRB crime data: forecasting, network analysis, explainable AI (SHAP) and offender profiling. React 19, Leaflet, D3.',
+      'Ten FastAPI microservices chewing through real NCRB crime data: forecasting, network analysis, explainable AI with SHAP, and offender profiling, all behind a React 19 map built with Leaflet and D3.',
   },
   {
     event: 'Redrob AI',
@@ -196,7 +196,7 @@ export const hackathons = [
     stat: { value: '100K', label: 'resumes ranked in under 45 s, on CPU' },
     repo: 'https://github.com/varuntripathi-029/Secret_saucers',
     detail:
-      '4-stage pipeline ranking 100K resumes in under 45 seconds on CPU. Sentence-transformers, ONNX Runtime and FAISS with a 13-feature weighted scorecard and deterministic explanations.',
+      'A 4-stage pipeline that ranks 100K resumes in under 45 seconds, on a CPU, with no GPU in sight. Sentence-transformers, ONNX Runtime and FAISS do the retrieval; a 13-feature weighted scorecard does the ranking and can explain every score.',
   },
   {
     event: 'ET AI Hackathon',
@@ -208,7 +208,7 @@ export const hackathons = [
     line: 'Delhi\'s air quality, forecast and traced to its sources',
     stat: { value: '+7.3%', label: 'over the persistence baseline' },
     repo: 'https://github.com/varuntripathi-029/ETA',
-    detail: 'Air-quality forecasting and source attribution with a PyTorch ConvLSTM, LangGraph and Groq.',
+    detail: 'Air-quality forecasting and source attribution: a PyTorch ConvLSTM predicts what is coming, then LangGraph and Groq work out who to blame.',
   },
   {
     event: 'LatentCode',
@@ -221,15 +221,15 @@ export const hackathons = [
     stat: { value: 'AST + RAG', label: 'tree-sitter parsing over code chunks' },
     repo: 'https://github.com/varuntripathi-029/SynapseScan',
     detail:
-      'Tech-debt intelligence platform: RAG over code chunks, tree-sitter AST parsing, CI/CD webhook integration and PostgreSQL. Next.js 14.',
+      'A tech-debt detective: RAG over code chunks, tree-sitter AST parsing, CI/CD webhooks and PostgreSQL, with a Next.js 14 front end that shows where the mess is.',
   },
 ]
 
 export const honors = [
-  'LeetCode Knight, rating 1886 with 300+ problems solved',
-  '30+ public GitHub repositories',
-  '1st place, Maximise (E-Summit 2026): highest ROI on a INR 10,00,000 virtual portfolio',
-  '1st rank, Ad Mads (Abhivyakti 2026)',
+  'LeetCode Knight at 1886, with 300+ problems solved',
+  '30+ public GitHub repositories, out in the open for anyone to judge',
+  '1st place at Maximise (E-Summit 2026): the best return on a INR 10,00,000 virtual portfolio, with pretend money and very real bragging rights',
+  '1st rank in Ad Mads at Abhivyakti 2026, the nationwide creative-campaign contest',
   'GenAI certification: building and optimizing generative AI with LangChain and HuggingFace (Udemy, Jan 2026)',
 ]
 
@@ -396,8 +396,8 @@ export const leadership = [
     org: 'E-Cell, IIIT Nagpur',
     period: 'Aug 2023 – Apr 2025',
     points: [
-      'Closed INR 11,00,000+ across 10+ technology sponsors, from cold outreach to signature.',
-      'Directed 20+ volunteers to stage 17 entrepreneurship events with 2,500+ attendees.',
+      'Closed INR 11,00,000+ from 10+ technology sponsors, starting at a cold email and ending at a signature.',
+      'Herded 20+ volunteers through 17 entrepreneurship events and 2,500+ attendees.',
     ],
   },
   {
@@ -405,7 +405,7 @@ export const leadership = [
     org: 'Abhivyakti 2026',
     period: '2026',
     points: [
-      'Led a team of 8 and closed partnerships with 20+ companies worth INR 20L+ in monetary and in-kind sponsorship.',
+      'Led a team of 8 that closed 20+ company partnerships worth INR 20L+ in cash and in-kind sponsorship.',
     ],
   },
   {
@@ -413,14 +413,14 @@ export const leadership = [
     org: 'Zerodha Under 25',
     period: '2026',
     points: [
-      'Ran the campus-artist programme at IIIT Nagpur and booked 4 headline acts for Abhivyakti 2026.',
-      'Owned outreach, negotiation and on-ground delivery for a 5,000+ live crowd and 1M+ online impressions.',
+      'Ran the Under 25 campus-artist programme at IIIT Nagpur and booked 4 headline acts for Abhivyakti 2026.',
+      'Owned the whole chain, from outreach to negotiation to the night itself: a 5,000+ live crowd and 1M+ online impressions.',
     ],
   },
   {
     role: 'Marketing Lead',
     org: 'TantraFiesta Tech Fest',
     period: 'Aug 2024 – Oct 2024',
-    points: ['Grew registered participants 16.7% year on year to 1,400+ and drew a 5,000+ crowd.'],
+    points: ['Grew registered participants 16.7% year on year to 1,400+, and drew a 5,000+ crowd on the day.'],
   },
 ]
