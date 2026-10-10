@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+secrets/
+.vercel/
+.claude/
+CLAUDE.md
+/varun_resume_aiqa.pdf
+.DS_Store
+Thumbs.db
