@@ -1,5 +1,5 @@
 import { projects } from '../data'
-import { ExpandBanner, PageHead } from '../components'
+import { ExpandBanner, PageHead, Shot } from '../components'
 
 export default function Projects() {
   return (
@@ -16,30 +16,36 @@ export default function Projects() {
             title={p.title}
             teaser={p.tagline}
             art={
-              <>
-                <span className="art-label">Stack</span>
-                <ul>
-                  {p.stack.slice(0, 4).map((s) => (
-                    <li key={s}>{s}</li>
-                  ))}
-                </ul>
-              </>
+              <Shot src={p.shot}>
+                <div className="ph">
+                  <span className="ph-label">Stack</span>
+                  <ul>
+                    {p.stack.slice(0, 4).map((s) => (
+                      <li key={s}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+              </Shot>
             }
           >
             <p className="banner-summary">{p.summary}</p>
             <div className="panel">
-              <p className="panel-label">Stack</p>
-              <ul>
-                {p.stack.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ul>
-              <p className="panel-label">Results</p>
-              <ul>
-                {p.facts.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
+              <div>
+                <p className="panel-label">Stack</p>
+                <ul>
+                  {p.stack.map((s) => (
+                    <li key={s}>{s}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="panel-label">Results</p>
+                <ul>
+                  {p.facts.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
             <div className="actions">
               {p.links.map((l) => (

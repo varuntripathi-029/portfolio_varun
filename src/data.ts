@@ -58,6 +58,7 @@ export const skills: { group: string; items: string }[] = [
 
 export type Project = {
   slug: string
+  shot?: string
   title: string
   tagline: string
   summary: string
@@ -72,6 +73,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     slug: 'hiresignal',
+    shot: '/shots/hiresignal.jpg',
     title: 'HireSignal',
     tagline: 'Hiring momentum from 886+ public sources, scored deterministically',
     summary:
@@ -88,6 +90,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'mx-rating',
+    shot: '/shots/mx-rating.jpg',
     title: 'MX_rating',
     tagline: 'A reproducible score for how agent-friendly a website is',
     summary:
@@ -103,6 +106,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'legal-contract-analyzer',
+    shot: '/shots/legal.jpg',
     title: 'Legal Contract Analyzer',
     tagline: 'RAG over Indian employment contracts, first token in 0.2s',
     summary:
@@ -182,6 +186,7 @@ export const honors = [
 
 export type Blog = {
   slug: string
+  shot?: string
   metric: { value: string; label: string }
   title: string
   tagline: string
@@ -196,6 +201,7 @@ export type Blog = {
 export const blogs: Blog[] = [
   {
     slug: 'upstox-tax-cost-insights',
+    shot: '/shots/upstox-tci.jpg',
     metric: { value: '25 rules', label: '158 tests behind the tax engine' },
     title: 'Know what you keep, before you sell',
     tagline: 'Tax if you sold today, and what you actually keep',

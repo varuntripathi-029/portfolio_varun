@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { blogs } from '../data'
-import { ExpandBanner, PageHead } from '../components'
+import { ExpandBanner, PageHead, Shot } from '../components'
 
 export default function Blogs() {
   return (
@@ -17,10 +17,19 @@ export default function Blogs() {
             title={b.title}
             teaser={b.tagline}
             art={
-              <>
-                <span className="art-value">{b.metric.value}</span>
-                <span className="art-caption">{b.metric.label}</span>
-              </>
+              <Shot src={b.shot}>
+                <div className="ph ph-metric">
+                  <span className="art-value">{b.metric.value}</span>
+                  <span className="art-caption">{b.metric.label}</span>
+                  <span className="ph-bars" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                </div>
+              </Shot>
             }
           >
             <p className="banner-summary">{b.summary}</p>
