@@ -5,11 +5,17 @@ export type PagerSection = { path: string; label: string; node: ReactNode }
 
 // Long enough to read as a glide, short enough that it never feels like waiting.
 const DURATION = 780
-const COOLDOWN = 220
-// How much further a wheel or trackpad must scroll past the end of a tall section to move on.
-const OVERSCROLL = 110
+// After a glide lands, the next one is held off for this long so a quick second scroll cannot
+// chain straight into another section.
+const COOLDOWN = 600
+// How much further a wheel or trackpad must scroll past the end of a tall section to move on
+// (about three or four mouse-wheel notches), and how much a section that fits needs.
+const OVERSCROLL = 360
+const FIT_PUSH = 90
+// Pushes closer together than this add up; a longer pause starts again from zero.
+const PUSH_WINDOW = 350
 // How far a vertical swipe must travel to count as "next" or "previous".
-const SWIPE = 56
+const SWIPE = 90
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
 // A section taller than the screen scrolls inside itself first.
@@ -39,6 +45,10 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     (i: number) => {
       const next = Math.min(Math.max(i, 0), sections.length - 1)
       consumed.current = true
+      const arriving = panels.current[next]
+      if (arriving && next !== current.current) {
+        arriving.scrollTop = next > current.current ? 0 : arriving.scrollHeight
+      }
       if (sections[next].path !== window.location.pathname) {
         navigate(sections[next].path, { replace: true })
       }
@@ -104,11 +114,13 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     let last = 0
     let pushed = 0
     let lastPush = 0
+    let startedAtEdge = false
 
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey) return
       const now = performance.now()
-      if (now - last > 160) consumed.current = false
+      const fresh = now - last > 160
+      if (fresh) consumed.current = false
       last = now
 
       const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
@@ -121,27 +133,27 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
         return
       }
 
+      // A section taller than the screen scrolls inside itself. At its end, only a gesture that
+      // began there counts, and it takes a deliberate push; momentum that merely arrived at the
+      // end, or a flick while reading the top, never moves the page.
       const panel = panels.current[current.current]
-      if (!horizontal && panel && overflows(panel)) {
-        const edge = dir > 0 ? atBottom(panel) : atTop(panel)
-        if (!edge) {
-          pushed = 0
-          return
-        }
-        e.preventDefault()
-        if (now - lastPush > 450 || Math.sign(pushed) !== dir) pushed = 0
-        lastPush = now
-        pushed += d
-        if (Math.abs(pushed) >= OVERSCROLL && !consumed.current) {
-          pushed = 0
-          go(current.current + dir)
-        }
+      const tall = !horizontal && !!panel && overflows(panel)
+      const edge = !tall || (dir > 0 ? atBottom(panel!) : atTop(panel!))
+      if (fresh) startedAtEdge = edge
+      if (tall && !edge) {
+        pushed = 0
         return
       }
 
       e.preventDefault()
-      if (consumed.current) return
-      go(current.current + dir)
+      if (!startedAtEdge) return
+      if (now - lastPush > PUSH_WINDOW || Math.sign(pushed) !== dir) pushed = 0
+      lastPush = now
+      pushed += d
+      if (Math.abs(pushed) >= (tall ? OVERSCROLL : FIT_PUSH) && !consumed.current) {
+        pushed = 0
+        go(current.current + dir)
+      }
     }
 
     el.addEventListener('wheel', onWheel, { passive: false })
