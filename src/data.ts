@@ -180,7 +180,6 @@ export const hackathons = [
     org: 'Zoho Catalyst',
     logo: '/logos/zoho.png',
     line: 'Crime analytics on real NCRB data, built as microservices',
-    stat: { value: '10', label: 'FastAPI microservices on real NCRB data' },
     repo: 'https://github.com/varuntripathi-029/crime-intelligence-platform',
     detail:
       'Ten FastAPI microservices chewing through real NCRB crime data: forecasting, network analysis, explainable AI with SHAP, and offender profiling, all behind a React 19 map built with Leaflet and D3.',
@@ -193,7 +192,6 @@ export const hackathons = [
     org: 'Redrob AI',
     logo: '/logos/redrob.png',
     line: 'Ranking 100K resumes on a CPU in under a minute',
-    stat: { value: '100K', label: 'resumes ranked in under 45 s, on CPU' },
     repo: 'https://github.com/varuntripathi-029/Secret_saucers',
     detail:
       'A 4-stage pipeline that ranks 100K resumes in under 45 seconds, on a CPU, with no GPU in sight. Sentence-transformers, ONNX Runtime and FAISS do the retrieval; a 13-feature weighted scorecard does the ranking and can explain every score.',
@@ -206,7 +204,6 @@ export const hackathons = [
     org: 'The Economic Times',
     logo: '/logos/et.png',
     line: 'Delhi\'s air quality, forecast and traced to its sources',
-    stat: { value: '+7.3%', label: 'over the persistence baseline' },
     repo: 'https://github.com/varuntripathi-029/ETA',
     detail: 'Air-quality forecasting and source attribution: a PyTorch ConvLSTM predicts what is coming, then LangGraph and Groq work out who to blame.',
   },
@@ -218,7 +215,6 @@ export const hackathons = [
     org: 'LatentCode',
     logo: '/logos/latentcode.svg',
     line: 'Tech-debt intelligence for any codebase',
-    stat: { value: 'AST + RAG', label: 'tree-sitter parsing over code chunks' },
     repo: 'https://github.com/varuntripathi-029/SynapseScan',
     detail:
       'A tech-debt detective: RAG over code chunks, tree-sitter AST parsing, CI/CD webhooks and PostgreSQL, with a Next.js 14 front end that shows where the mess is.',
