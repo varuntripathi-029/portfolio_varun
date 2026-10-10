@@ -98,7 +98,7 @@ export default function Search({ open, onClose }: { open: boolean; onClose: () =
         : `Loading the language model (about 25 MB, once)… ${Math.round(progress)}%`
 
   return (
-    <div className="search-backdrop" onMouseDown={onClose}>
+    <div className="search-backdrop" data-overlay="search" onMouseDown={onClose}>
       <div
         className="search"
         role="dialog"

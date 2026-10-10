@@ -84,11 +84,26 @@ export default function Experience() {
             ))}
           </ul>
         </section>
+
+        <ExpandCard
+          kicker="or play"
+          title="Paper Hands"
+          teaser="Can your trading rule beat doing nothing?"
+          accent={accentAt(1)}
+        >
+          <p>
+            Most trading rules look brilliant in a spreadsheet and fall apart at the till, where every trade is billed for
+            charges and, if you sold inside a year, 20% tax. Paper Hands runs your rule on 13 years of real Nifty 50
+            index-fund prices, 2013 to 2026, and bills it exactly that way. Then it sets the result against the opponent
+            that never trades and never complains: buy and hold.
+          </p>
+          <p className="aside">Your opponent has no strategy, no analyst team and no excuses.</p>
+          <button type="button" className="pill-btn" onClick={() => window.dispatchEvent(new CustomEvent('open-lab'))}>
+            Enter the arena
+          </button>
+        </ExpandCard>
       </div>
 
-      <div className="span-2">
-        <Reel items={reel} />
-      </div>
 
       <section className="card">
         <h2 className="card-title card-title-sm">Experience</h2>
@@ -101,6 +116,7 @@ export default function Experience() {
         />
       </section>
 
+      <div className="exp-right">
       <ExpandCard
         title="The toolbox"
         badge={skills.map((s) => s.group).join(' · ')}
@@ -125,6 +141,8 @@ export default function Experience() {
           ))}
         </dl>
       </ExpandCard>
+      <Reel items={reel} />
+      </div>
     </div>
   )
 }

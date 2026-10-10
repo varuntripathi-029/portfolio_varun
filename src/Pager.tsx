@@ -187,6 +187,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
   useEffect(() => {
     if (mobile) return
     const onKey = (e: KeyboardEvent) => {
+      if (document.querySelector('[data-overlay]')) return
       const t = e.target as HTMLElement | null
       if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return
       if (busy.current) return

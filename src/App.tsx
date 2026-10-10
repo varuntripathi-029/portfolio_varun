@@ -9,6 +9,7 @@ import BlogPost from './pages/BlogPost'
 import Leadership from './pages/Leadership'
 import Pager, { type PagerSection } from './Pager'
 import Search from './Search'
+import Terminal from './Terminal'
 import { accentAt } from './palette'
 
 const sections: PagerSection[] = [
@@ -160,10 +161,18 @@ function ScrollToTop({ enabled }: { enabled: boolean }) {
 export default function App() {
   const onPost = useMatch('/blogs/:slug') !== null
   const [searchOpen, setSearchOpen] = useState(false)
+  const [labOpen, setLabOpen] = useState(false)
   useRevealAndGlow()
 
   useEffect(() => {
+    const open = () => setLabOpen(true)
+    window.addEventListener('open-lab', open)
+    return () => window.removeEventListener('open-lab', open)
+  }, [])
+
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (document.querySelector('[data-overlay="lab"]')) return
       const t = e.target as HTMLElement | null
       const typing = !!t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable)
       if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) {
@@ -186,6 +195,7 @@ export default function App() {
         </Routes>
       </main>
       <Search open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <Terminal open={labOpen} onClose={() => setLabOpen(false)} />
     </div>
   )
 }

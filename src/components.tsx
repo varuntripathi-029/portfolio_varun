@@ -3,6 +3,19 @@ import { accentAt, hueAt } from './palette'
 
 type Accented = CSSProperties & { '--accent'?: string }
 
+function WheelToggle({ open, light }: { open: boolean; light?: boolean }) {
+  return (
+    <span className="toggle-row" aria-hidden="true">
+      <span className="toggle-pill" data-open={open}>
+        <span className="toggle-label">{open ? 'Collapse' : 'Expand'}</span>
+        <span className="toggle-roll">
+          <span className={`toggle${light ? ' toggle-light' : ''}`} />
+        </span>
+      </span>
+    </span>
+  )
+}
+
 export function Collapse({ open, children }: { open: boolean; children: ReactNode }) {
   return (
     <div className={`collapse${open ? ' is-open' : ''}`} inert={!open}>
@@ -64,7 +77,7 @@ export function Timeline({
                 <span className="tl-title">{it.title}</span>
                 {it.meta && <span className="tl-meta">{it.meta}</span>}
               </span>
-              <span className="toggle" aria-hidden="true" />
+              <WheelToggle open={open} />
             </button>
             <div id={panelId}>
               <Collapse open={open}>
@@ -85,12 +98,14 @@ export function Timeline({
 export function ExpandCard({
   kicker,
   title,
+  teaser,
   badge,
   accent,
   children,
 }: {
   kicker?: string
   title: string
+  teaser?: string
   badge?: string
   accent?: string
   children: ReactNode
@@ -112,9 +127,10 @@ export function ExpandCard({
         <span className="expand-text">
           {kicker && <span className="card-kicker">{kicker}</span>}
           <span className="card-title">{title}</span>
+          {teaser && <span className="card-teaser">{teaser}</span>}
           {badge && <span className="badge">{badge}</span>}
         </span>
-        <span className="toggle" aria-hidden="true" />
+        <WheelToggle open={open} />
       </button>
       <div id={id}>
         <Collapse open={open}>
@@ -160,7 +176,7 @@ export function ExpandBanner({
         </span>
         <span className="banner-title">{title}</span>
         <span className="banner-teaser">{teaser}</span>
-        <span className="toggle toggle-light" aria-hidden="true" />
+        <WheelToggle open={open} light />
       </button>
       {art && (
         <div className="tile-art" aria-hidden="true">
