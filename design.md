@@ -32,6 +32,8 @@ Layout and interaction feel are modelled on `dhananjaychopra.in`: a rounded left
 | `src/palette.ts` | Accent variables for cards and a hue list for chips |
 | `src/App.tsx` | Shell, sidebar, theme toggle, reveal observer, pointer glow, routes |
 | `src/Pager.tsx` | Horizontal section pager (the scroll behavior) |
+| `src/Search.tsx`, `src/searchEngine.ts` | In-browser semantic search overlay and its engine |
+| `scripts/build-index.mjs` | Builds `public/search-index.json` (content chunks + embeddings) |
 | `src/components.tsx` | `Collapse`, `Timeline`, `ExpandCard`, `ExpandBanner`, `Shot`, `Reel`, `Words`, `PageHead` |
 | `src/pages/*.tsx` | One component per section, plus `BlogPost` (the only separate route) |
 | `src/styles.css` | Every style. Tokens at the top, later blocks override earlier ones |
@@ -168,6 +170,18 @@ Captured through Claude in Chrome from the deployed sites, resized to 1100px wid
 | Route changes | View Transitions API (0.32s) only for the blog post links |
 
 `prefers-reduced-motion` disables all transitions and animations, and forces revealed content visible.
+
+## 9b. Semantic search
+
+A spotlight-style overlay (sidebar button, `/` or Cmd/Ctrl+K) that searches the site's own content by meaning, entirely in the browser.
+
+- **Model:** `Xenova/all-MiniLM-L6-v2`, 8-bit quantized (about 25 MB), loaded lazily through transformers.js the first time the overlay opens, then cached by the browser. The ONNX wasm runtime is self-hosted from the build output. The main bundle is unaffected because the library is a dynamic import.
+- **Index:** `public/search-index.json` holds about 47 content chunks with precomputed 384-dim vectors, so only the visitor's query is embedded at runtime. **Re-run `npm run index` whenever `src/data.ts` changes**, or the search will return stale content.
+- **Ranking:** cosine similarity plus a keyword layer weighted by rarity (a small IDF), plus a small prior for projects and hackathons over write-ups. Projects are split into a summary chunk and a facts/stack chunk, and results are de-duplicated per project or blog so one item appears once.
+- **Aliases:** plain-language synonyms per project live in `ALIASES` in `build-index.mjs` ("mobile app", "low latency", ...). Add one there when a natural query misses.
+- **Fallbacks:** keyword-only matching shows instantly while the model downloads, and stays if the model cannot load.
+- **Transparency:** each hit shows its similarity score and the matched words, and the panel states that everything runs locally.
+- **File name caveat:** `search.ts` and `Search.tsx` collide on case-insensitive filesystems, so the engine is `searchEngine.ts`.
 
 ## 10. Hard-won rules (do not repeat these bugs)
 
