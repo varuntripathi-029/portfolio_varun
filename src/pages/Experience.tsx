@@ -25,7 +25,7 @@ export default function Experience() {
   return (
     <div className="grid">
       <section className="card hero">
-        <img className="avatar" src={profile.photo} alt="Portrait of Varun Tripathi" width={96} height={96} />
+        <img className="avatar" src={profile.photo} alt="Portrait of Varun Tripathi" width={108} height={135} />
         <p className="hello">Hi, I’m {profile.name}</p>
         <h1>
           <Words text={profile.headline} />
