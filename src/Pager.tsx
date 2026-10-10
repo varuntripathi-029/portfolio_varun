@@ -6,29 +6,25 @@ export type PagerSection = { path: string; label: string; node: ReactNode }
 // Long enough to read as a glide, short enough that it never feels like waiting.
 const DURATION = 780
 const COOLDOWN = 220
+// How much further a wheel or trackpad must scroll past the end of a tall section to move on.
+const OVERSCROLL = 110
+// How far a vertical swipe must travel to count as "next" or "previous".
+const SWIPE = 56
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
-function useMobile() {
-  const [mobile, setMobile] = useState(() => window.matchMedia('(max-width: 760px)').matches)
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 760px)')
-    const on = () => setMobile(mq.matches)
-    mq.addEventListener('change', on)
-    return () => mq.removeEventListener('change', on)
-  }, [])
-  return mobile
-}
+// A section taller than the screen scrolls inside itself first.
+const overflows = (panel: HTMLElement | null | undefined) => !!panel && panel.scrollHeight - panel.clientHeight > 40
+const atBottom = (p: HTMLElement) => p.scrollTop + p.clientHeight >= p.scrollHeight - 2
+const atTop = (p: HTMLElement) => p.scrollTop <= 1
 
 export default function Pager({ sections }: { sections: PagerSection[] }) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const mobile = useMobile()
 
   const track = useRef<HTMLDivElement>(null)
   const panels = useRef<(HTMLElement | null)[]>([])
   const frame = useRef(0)
   const busy = useRef(false)
-  const gestureEdge = useRef(false)
   const consumed = useRef(false)
 
   const indexOfPath = useCallback(
@@ -42,7 +38,6 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
   const go = useCallback(
     (i: number) => {
       const next = Math.min(Math.max(i, 0), sections.length - 1)
-      gestureEdge.current = false
       consumed.current = true
       if (sections[next].path !== window.location.pathname) {
         navigate(sections[next].path, { replace: true })
@@ -86,43 +81,35 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
   useLayoutEffect(() => {
     const first = current.current === urlIndex && track.current && track.current.scrollLeft === 0
     setActive(urlIndex)
-    if (mobile) {
-      current.current = urlIndex
-      return
-    }
     if (current.current !== urlIndex || first) {
-      const instant = first
       current.current = urlIndex
-      moveTo(urlIndex, instant || !track.current)
+      moveTo(urlIndex, !!first || !track.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlIndex, mobile])
-
-  useEffect(() => {
-    if (!mobile) return
-    panels.current[urlIndex]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }, [urlIndex, mobile])
+  }, [urlIndex])
 
   // Keep the track aligned when the window changes size.
   useEffect(() => {
-    if (mobile) return
     const on = () => moveTo(current.current, true)
     window.addEventListener('resize', on)
     return () => window.removeEventListener('resize', on)
-  }, [mobile, moveTo])
+  }, [moveTo])
 
-  // Scroll wheel: scroll inside a section first, then glide to the next one.
+  // Mouse wheel and trackpad: every vertical scroll ends in a move to the next section.
+  // A section that fits the screen moves on at once; a taller one scrolls inside itself, and
+  // once its end is reached a little more scrolling in the same direction moves on.
   useEffect(() => {
     const el = track.current
-    if (!el || mobile) return
+    if (!el) return
     let last = 0
+    let pushed = 0
+    let lastPush = 0
 
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey) return
       const now = performance.now()
-      const fresh = now - last > 160
+      if (now - last > 160) consumed.current = false
       last = now
-      if (fresh) consumed.current = false
 
       const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
       const d = horizontal ? e.deltaX : e.deltaY
@@ -134,37 +121,79 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
         return
       }
 
-      // A scroll moves to the next section. Only a section taller than the screen scrolls
-      // inside itself first, and then hands over at its edge on a fresh gesture.
       const panel = panels.current[current.current]
-      if (!horizontal && panel && panel.scrollHeight - panel.clientHeight > 40) {
-        const atEdge =
-          dir > 0
-            ? panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 2
-            : panel.scrollTop <= 1
-        if (fresh) gestureEdge.current = atEdge
-        if (!atEdge) return
+      if (!horizontal && panel && overflows(panel)) {
+        const edge = dir > 0 ? atBottom(panel) : atTop(panel)
+        if (!edge) {
+          pushed = 0
+          return
+        }
         e.preventDefault()
-        if (!gestureEdge.current || consumed.current) return
-        consumed.current = true
-        go(current.current + dir)
+        if (now - lastPush > 450 || Math.sign(pushed) !== dir) pushed = 0
+        lastPush = now
+        pushed += d
+        if (Math.abs(pushed) >= OVERSCROLL && !consumed.current) {
+          pushed = 0
+          go(current.current + dir)
+        }
         return
       }
 
       e.preventDefault()
       if (consumed.current) return
-      consumed.current = true
       go(current.current + dir)
     }
 
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
-  }, [mobile, go])
+  }, [go])
 
-  // Touch and trackpad swipes scroll the track natively; sync the URL when they settle.
+  // Touch: a vertical swipe moves between sections. A tall section scrolls first, and a swipe
+  // that starts at its end moves on. Horizontal swipes pan the track natively and snap.
   useEffect(() => {
     const el = track.current
-    if (!el || mobile) return
+    if (!el) return
+    let sx = 0
+    let sy = 0
+    let canNext = false
+    let canPrev = false
+    let tracking = false
+
+    const onStart = (e: TouchEvent) => {
+      tracking = false
+      if (busy.current || e.touches.length !== 1) return
+      const panel = panels.current[current.current]
+      const tall = overflows(panel)
+      canNext = !tall || (!!panel && atBottom(panel))
+      canPrev = !tall || (!!panel && atTop(panel))
+      sx = e.touches[0].clientX
+      sy = e.touches[0].clientY
+      tracking = true
+    }
+
+    const onEnd = (e: TouchEvent) => {
+      if (!tracking) return
+      tracking = false
+      const t = e.changedTouches[0]
+      const dx = t.clientX - sx
+      const dy = t.clientY - sy
+      if (Math.abs(dy) < SWIPE || Math.abs(dy) < Math.abs(dx) * 1.3 || busy.current) return
+      if (dy < 0 && canNext) go(current.current + 1)
+      else if (dy > 0 && canPrev) go(current.current - 1)
+    }
+
+    el.addEventListener('touchstart', onStart, { passive: true })
+    el.addEventListener('touchend', onEnd, { passive: true })
+    return () => {
+      el.removeEventListener('touchstart', onStart)
+      el.removeEventListener('touchend', onEnd)
+    }
+  }, [go])
+
+  // Horizontal swipes and trackpad pans scroll the track natively; sync the URL when they settle.
+  useEffect(() => {
+    const el = track.current
+    if (!el) return
     let timer = 0
     const onScroll = () => {
       if (busy.current) return
@@ -182,10 +211,9 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
       window.clearTimeout(timer)
       el.removeEventListener('scroll', onScroll)
     }
-  }, [mobile, go, sections.length])
+  }, [go, sections.length])
 
   useEffect(() => {
-    if (mobile) return
     const onKey = (e: KeyboardEvent) => {
       if (document.querySelector('[data-overlay]')) return
       const t = e.target as HTMLElement | null
@@ -196,7 +224,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
       else if (e.key === 'ArrowLeft') step = -1
       else if (['ArrowDown', 'PageDown', ' '].includes(e.key) || ['ArrowUp', 'PageUp'].includes(e.key)) {
         const panel = panels.current[current.current]
-        if (panel && panel.scrollHeight - panel.clientHeight > 40) return
+        if (overflows(panel)) return
         step = ['ArrowDown', 'PageDown', ' '].includes(e.key) ? 1 : -1
         e.preventDefault()
       }
@@ -204,7 +232,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [mobile, go])
+  }, [go])
 
   useEffect(() => () => cancelAnimationFrame(frame.current), [])
 
@@ -219,7 +247,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
             }}
             className="pager-panel"
             aria-label={s.label}
-            aria-hidden={!mobile && i !== active ? true : undefined}
+            aria-hidden={i !== active ? true : undefined}
           >
             {s.node}
           </section>
