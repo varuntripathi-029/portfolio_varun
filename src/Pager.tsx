@@ -29,6 +29,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
   const frame = useRef(0)
   const busy = useRef(false)
   const gestureEdge = useRef(false)
+  const consumed = useRef(false)
 
   const indexOfPath = useCallback(
     (p: string) => Math.max(0, sections.findIndex((s) => s.path === p)),
@@ -42,6 +43,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     (i: number) => {
       const next = Math.min(Math.max(i, 0), sections.length - 1)
       gestureEdge.current = false
+      consumed.current = true
       if (sections[next].path !== window.location.pathname) {
         navigate(sections[next].path, { replace: true })
       }
@@ -120,6 +122,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
       const now = performance.now()
       const fresh = now - last > 160
       last = now
+      if (fresh) consumed.current = false
 
       const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
       const d = horizontal ? e.deltaX : e.deltaY
@@ -131,22 +134,26 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
         return
       }
 
-      if (!horizontal) {
-        const panel = panels.current[current.current]
-        if (panel) {
-          const atEdge =
-            dir > 0
-              ? panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 2
-              : panel.scrollTop <= 1
-          if (fresh) gestureEdge.current = atEdge
-          if (!atEdge) return
-        }
-      } else if (fresh) {
-        gestureEdge.current = true
+      // A scroll moves to the next section. Only a section taller than the screen scrolls
+      // inside itself first, and then hands over at its edge on a fresh gesture.
+      const panel = panels.current[current.current]
+      if (!horizontal && panel && panel.scrollHeight - panel.clientHeight > 40) {
+        const atEdge =
+          dir > 0
+            ? panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 2
+            : panel.scrollTop <= 1
+        if (fresh) gestureEdge.current = atEdge
+        if (!atEdge) return
+        e.preventDefault()
+        if (!gestureEdge.current || consumed.current) return
+        consumed.current = true
+        go(current.current + dir)
+        return
       }
 
       e.preventDefault()
-      if (!gestureEdge.current) return
+      if (consumed.current) return
+      consumed.current = true
       go(current.current + dir)
     }
 
@@ -180,11 +187,19 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
   useEffect(() => {
     if (mobile) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
       const t = e.target as HTMLElement | null
       if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return
       if (busy.current) return
-      go(current.current + (e.key === 'ArrowRight' ? 1 : -1))
+      let step = 0
+      if (e.key === 'ArrowRight') step = 1
+      else if (e.key === 'ArrowLeft') step = -1
+      else if (['ArrowDown', 'PageDown', ' '].includes(e.key) || ['ArrowUp', 'PageUp'].includes(e.key)) {
+        const panel = panels.current[current.current]
+        if (panel && panel.scrollHeight - panel.clientHeight > 40) return
+        step = ['ArrowDown', 'PageDown', ' '].includes(e.key) ? 1 : -1
+        e.preventDefault()
+      }
+      if (step) go(current.current + step)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
