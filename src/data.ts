@@ -58,6 +58,7 @@ export const skills: { group: string; items: string }[] = [
 
 export type Project = {
   slug: string
+  diagram?: string[]
   shot?: string
   title: string
   tagline: string
@@ -87,6 +88,24 @@ export const projects: Project[] = [
     ],
     links: [{ label: 'Live site', href: 'https://get-job-fe.vercel.app/' }],
     status: 'Actively building',
+  },
+  {
+    slug: 'devagent-remote',
+    diagram: ['Phone', 'Relay', 'Laptop'],
+    title: 'DevAgent Remote',
+    tagline: 'Drive Claude Code, Gemini CLI and Codex on your laptop from a phone',
+    summary:
+      'A control plane for CLI coding agents. The laptop dials out to a relay, so no home ports are opened, and the phone starts tasks, watches live output, approves tool calls and reverts changes.',
+    tags: ['Developer tools', 'Mobile'],
+    color: 'var(--c-teal)',
+    stack: ['FastAPI relay', 'asyncio worker', 'Expo / React Native', 'GitHub OAuth + JWT'],
+    facts: [
+      'Reverse WebSocket tunnel: 0 inbound ports, 1s to 30s exponential reconnect backoff',
+      'Every task git-checkpointed, so any result can be reverted from the phone',
+      '3 CLI agents behind one adapter interface; 13-message JSON protocol',
+      '4,508 lines across 31 files in 10 days',
+    ],
+    links: [{ label: 'Code', href: 'https://github.com/varuntripathi-029/remote-agent' }],
   },
   {
     slug: 'mx-rating',

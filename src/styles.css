@@ -1870,3 +1870,33 @@ h2.card-title {
 .now h2 {
   max-width: none;
 }
+
+/* architecture-flow placeholder for projects with no public site */
+.ph-flow {
+  display: grid;
+  align-content: center;
+  gap: 0;
+}
+
+.flow-node-wrap {
+  display: grid;
+  justify-items: center;
+}
+
+.flow-node {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+  color: #1c1b16;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.flow-link {
+  width: 2px;
+  height: 18px;
+  background: repeating-linear-gradient(to bottom, var(--c-teal) 0 4px, transparent 4px 7px);
+}

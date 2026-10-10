@@ -7,7 +7,7 @@ export default function Projects() {
       <PageHead title="Projects">
         AI systems I’ve built end to end, from retrieval and inference to the interface on top.
       </PageHead>
-      <div className="grid grid-top">
+      <div className="grid grid-top tiles-3">
         {projects.map((p) => (
           <ExpandBanner
             key={p.slug}
@@ -17,14 +17,25 @@ export default function Projects() {
             teaser={p.tagline}
             art={
               <Shot src={p.shot}>
-                <div className="ph">
-                  <span className="ph-label">Stack</span>
-                  <ul>
-                    {p.stack.slice(0, 4).map((s) => (
-                      <li key={s}>{s}</li>
+                {p.diagram ? (
+                  <div className="ph ph-flow">
+                    {p.diagram.map((n, i) => (
+                      <span key={n} className="flow-node-wrap">
+                        <span className="flow-node">{n}</span>
+                        {i < p.diagram!.length - 1 && <span className="flow-link" aria-hidden="true" />}
+                      </span>
                     ))}
-                  </ul>
-                </div>
+                  </div>
+                ) : (
+                  <div className="ph">
+                    <span className="ph-label">Stack</span>
+                    <ul>
+                      {p.stack.slice(0, 4).map((s) => (
+                        <li key={s}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </Shot>
             }
           >
