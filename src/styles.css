@@ -30,7 +30,9 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
   --font-body: Inter, -apple-system, 'system-ui', 'Segoe UI', sans-serif;
-  --font-display: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: Fraunces, 'Iowan Old Style', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-hand: Caveat, 'Segoe Print', cursive;
 }
 
 :root[data-theme='dark'] {
@@ -1894,4 +1896,114 @@ h2.card-title {
   width: 2px;
   height: 18px;
   background: repeating-linear-gradient(to bottom, var(--c-teal) 0 4px, transparent 4px 7px);
+}
+
+/* ---- type roles: soft serif display, Inter for reading, mono for facts, hand for asides ---- */
+h1,
+h2,
+h3,
+.banner-title,
+.card-title,
+.art-value {
+  font-variation-settings: 'SOFT' 80, 'WONK' 0;
+}
+
+.hero h1,
+.page-head h1 {
+  font-weight: 480;
+  letter-spacing: -0.022em;
+}
+
+.banner-title,
+.banner h2,
+.card-title {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.chip,
+.card-kicker,
+.badge,
+.tl-meta,
+.link-note,
+.panel-label,
+.art-label,
+.art-caption,
+.ph-label {
+  font-family: var(--font-mono);
+}
+
+.banner .chip {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.card-kicker,
+.tl-meta,
+.link-note {
+  font-size: 12.5px;
+  letter-spacing: 0;
+}
+
+.badge {
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+.panel li,
+.panel ul,
+.ph li {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.hello {
+  font-family: var(--font-hand);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.hero-id {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.hero-id .avatar {
+  margin-bottom: 10px;
+}
+
+.scribble {
+  margin-bottom: 18px;
+  font-family: var(--font-hand);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.05;
+  color: var(--ink-soft);
+  transform: rotate(-5deg);
+}
+
+.skill-chip,
+.reel-chip {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.reel-chip {
+  font-size: 13.5px;
+}
+
+.post-section h2 {
+  font-size: 22px;
+}
+
+.post-section p {
+  font-size: 17px;
+}
+
+.hero > .hero-id {
+  animation-delay: 0.05s;
 }
