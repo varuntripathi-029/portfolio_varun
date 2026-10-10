@@ -42,6 +42,7 @@ Layout and interaction feel are modelled on `dhananjaychopra.in`: a rounded left
 | `src/styles.css` | Every style. Tokens at the top, later blocks override earlier ones |
 | `public/shots/*.jpg` | Real screenshots used inside project and blog tiles |
 | `public/varun.jpg` | Portrait, 480x600, 4:5, cropped around the face |
+| `public/favicon.ico`, `favicon-16.png`, `favicon-32.png`, `apple-touch-icon.png` | The robot mascot, background cut out of the source art. The touch icon sits on a light backdrop because iOS paints transparency black |
 
 ## 4. Layout system
 
