@@ -1,4 +1,7 @@
-import { useId, useState, type ReactNode } from 'react'
+import { useId, useState, type CSSProperties, type ReactNode } from 'react'
+import { accentAt } from './palette'
+
+type Accented = CSSProperties & { '--accent'?: string }
 
 export function Collapse({ open, children }: { open: boolean; children: ReactNode }) {
   return (
@@ -17,6 +20,19 @@ export function PageHead({ title, children }: { title: string; children?: ReactN
   )
 }
 
+export function Words({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(' ').map((w, i) => (
+        <span key={i} className="word" style={{ '--i': i } as CSSProperties}>
+          {w}
+          {' '}
+        </span>
+      ))}
+    </>
+  )
+}
+
 export function Timeline({
   items,
 }: {
@@ -31,7 +47,11 @@ export function Timeline({
         const open = openIdx === i
         const panelId = `${base}-${i}`
         return (
-          <li key={it.title} className={`tl-item${open ? ' is-open' : ''}`}>
+          <li
+            key={it.title}
+            className={`tl-item${open ? ' is-open' : ''}`}
+            style={{ '--accent': accentAt(i * 2) } as Accented}
+          >
             <span className="tl-dot" aria-hidden="true" />
             <button
               type="button"
@@ -66,17 +86,22 @@ export function ExpandCard({
   kicker,
   title,
   badge,
+  accent,
   children,
 }: {
   kicker?: string
   title: string
   badge?: string
+  accent?: string
   children: ReactNode
 }) {
   const [open, setOpen] = useState(false)
   const id = useId()
   return (
-    <section className={`card expand${open ? ' is-open' : ''}`}>
+    <section
+      className={`card expand${open ? ' is-open' : ''}`}
+      style={accent ? ({ '--accent': accent } as Accented) : undefined}
+    >
       <button
         type="button"
         className="expand-head"
@@ -141,5 +166,25 @@ export function ExpandBanner({
         </Collapse>
       </div>
     </article>
+  )
+}
+
+export function Reel({ items }: { items: string[] }) {
+  const row = (hidden: boolean) => (
+    <ul className="reel-row" aria-hidden={hidden || undefined}>
+      {items.map((t, i) => (
+        <li key={t} className="reel-chip" style={{ '--accent': accentAt(i) } as Accented}>
+          {t}
+        </li>
+      ))}
+    </ul>
+  )
+  return (
+    <div className="reel" aria-label="Technologies I work with">
+      <div className="reel-track">
+        {row(false)}
+        {row(true)}
+      </div>
+    </div>
   )
 }
