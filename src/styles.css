@@ -30,6 +30,7 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-expand: cubic-bezier(0.33, 0, 0.15, 1);
+  --expand-dur: 0.71s;
   --font-body: Inter, -apple-system, 'system-ui', 'Segoe UI', sans-serif;
   --font-display: Fraunces, 'Iowan Old Style', Georgia, serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
@@ -826,7 +827,8 @@ h2.card-title {
   display: grid;
   grid-template-rows: 0fr;
   opacity: 0;
-  transition: grid-template-rows 0.85s var(--ease-expand), opacity 0.7s var(--ease-soft) 0.05s;
+  transition: grid-template-rows var(--expand-dur) var(--ease-expand),
+    opacity calc(var(--expand-dur) * 0.8) var(--ease-soft) 0.04s;
 }
 
 .collapse.is-open {
@@ -2035,15 +2037,9 @@ h3,
   transform: translateY(-2px);
 }
 
-/* an opened tile takes the full row so its stack/results columns have room */
-.tiles-3 > .banner.is-open {
-  grid-column: 1 / -1;
-}
-
-.tiles-3 > .banner.is-open .banner-head > .banner-title,
-.tiles-3 > .banner.is-open .banner-head > .banner-teaser,
-.tiles-3 > .banner.is-open .banner-head > .toggle-row {
-  max-width: 60ch;
+/* an opened tile grows downward inside its own column: no re-flow, so neighbours move with the height animation */
+.tiles-3 > .banner:nth-child(-n + 3) .panel {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 /* ---- in-browser semantic search ---- */
@@ -2981,15 +2977,15 @@ h3,
 .toggle,
 .toggle::before,
 .toggle::after {
-  transition-duration: 0.75s;
+  transition-duration: var(--expand-dur);
   transition-timing-function: var(--ease-expand);
 }
 
 .banner-head {
-  transition: min-height 0.85s var(--ease-expand);
+  transition: min-height var(--expand-dur) var(--ease-expand);
 }
 
 .banner.is-open .tile-art,
 .banner .tile-art {
-  transition: transform 0.7s var(--ease-expand), opacity 0.6s var(--ease-soft);
+  transition: transform var(--expand-dur) var(--ease-expand), opacity calc(var(--expand-dur) * 0.8) var(--ease-soft);
 }
