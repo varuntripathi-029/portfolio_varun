@@ -80,36 +80,36 @@ Sections sit side by side in a horizontal flex track (`.pager`). The user scroll
 ## 6. Color theory
 
 ### Principle
-Muted, saturated-but-not-neon fills like the reference, with **one cool hue family carrying the whole interface**. Neutrals are tinted toward the primary hue so surfaces and accents read as one family instead of grey plus colors.
+Real, pigment-like colors, not a tech gradient. The blue-black and indigo-to-violet look is the default of generated interfaces, so it is avoided on purpose: no violet or purple anywhere, no gradient washes, flat fills only. Accents are earth pigments (denim, moss, terracotta, ochre, oxblood, petrol) on neutrals that lean warm.
 
 ### Accent palette (CSS variables, light / dark)
 
-| Token | Light | Dark | Used for |
-|---|---|---|---|
-| `--c-indigo` | `#425094` | `#384580` | Primary: Now banner, first tiles, active nav dot, hero wash |
-| `--c-emerald` | `#2e7b51` | `#276a46` | Second tile color |
-| `--c-vermilion` | `#a85444` | `#8f4637` | Warm counter-accent, the "podium" hackathon, REVES dot |
-| `--c-violet` | `#6d4f8c` | `#5d4478` | Analogous neighbor of indigo |
-| `--c-magenta` | `#9a4a6e` | `#834060` | Rare accent |
-| `--c-teal` | `#2b6f78` | `#245c65` | Cool analogous accent |
+| Token | Light | Dark | Reads as | Used for |
+|---|---|---|---|---|
+| `--c-blue` | `#3d5a80` | `#34506f` | Denim | Primary: Now banner, first tiles, hero details |
+| `--c-emerald` | `#2f7a52` | `#3a6a49` | Moss / forest | Second tile color |
+| `--c-vermilion` | `#a85444` | `#98483a` | Terracotta / brick | Warm counter-accent, the "podium" hackathon |
+| `--c-ochre` | `#8f6618` | `#86641f` | Ochre / mustard | Fourth tile color |
+| `--c-burgundy` | `#8a3a4c` | `#7a3243` | Oxblood | Rare accent |
+| `--c-teal` | `#2b6f78` | `#2b6266` | Petrol | Cool counter-accent |
 
-Rules: all tile fills keep white text at 5:1 or better. Dark variants keep the same hues but drop chroma and lightness a little so saturated fills sit on a dark surface instead of glowing off it. Do not add a pure black overlay to dark tiles (it made them muddy); use the darker variant plus a 1px inner hairline.
+Rules: tile fills keep white text at about 4.5:1 or better. Dark variants are slightly lower in chroma so a saturated fill sits on a dark surface instead of glowing off it. No black overlay on dark tiles (it made them muddy); a 1px inner hairline defines the edge. Never reintroduce hues between 260 and 330 degrees.
 
 ### Neutrals
 - Light: `--bg #fff`, `--panel #f7f7f6`, `--line #e6e5df`, `--ink #16150f`. Slightly warm, matching the reference.
-- Dark: neutrals share the indigo hue (about 235 degrees): `--bg #0d0e15`, `--panel #141622`, `--raised #1c1f31`, `--line #272b40`, `--ink #eceefa`. This is the analogous move that keeps dark mode from looking forced.
+- Dark: warm graphite, not blue-black: `--bg #141311`, `--panel #1b1a17`, `--raised #24221e`, `--line #302e29`, `--ink #ece9e1`. The warm bias keeps the earth accents harmonious (same temperature family) and avoids the cold-neon feel.
 - The theme is set before first paint by an inline script in `index.html` (saved choice, else system preference).
 
 ### Chips and pills (reel, skills)
 Defined in OKLCH so lightness is equal and only hue changes, which keeps a row of many chips harmonious instead of rainbow:
 
-- Light: background `oklch(94% 0.04 h)`, text `oklch(40% 0.15 h)`, border `oklch(85% 0.07 h)`.
-- Dark: background `oklch(31% 0.075 h)`, text `oklch(87% 0.08 h)`, border `oklch(43% 0.1 h)`.
-- Hover fills solid at `oklch(50% 0.19 h)` (light) with white text.
-- Hues come from `palette.ts`: mostly 212 to 308 (blue, violet, teal) with an occasional warm coral at 24.
+- Light: background `oklch(94% 0.035 h)`, text `oklch(40% 0.12 h)`, border `oklch(85% 0.06 h)`.
+- Dark: background `oklch(31% 0.055 h)`, text `oklch(87% 0.07 h)`, border `oklch(43% 0.08 h)`.
+- Hover fills solid at `oklch(50% 0.14 h)` (light) or `oklch(62% 0.13 h)` (dark).
+- Hues come from `palette.ts`: earth pigments only (denim 245, moss 160, terracotta 40, ochre 85, petrol 195, brick 15, olive 130). Chroma is kept low (0.035 to 0.14) so nothing looks neon.
 
 ### Tints
-Expandable white cards tint toward their accent on hover and when open: 8% in light, 14% in dark, with a border at 45% accent. Badges and skill chips use 14% to 24% accent tints.
+Expandable white cards tint toward their accent on hover and when open: 8% in light, 12% in dark, with a border at 45% accent. Badges and skill chips use 14% to 24% accent tints.
 
 ## 7. Typography
 
