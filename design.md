@@ -32,6 +32,7 @@ Layout and interaction feel are modelled on `dhananjaychopra.in`: a rounded left
 | `src/palette.ts` | Accent variables for cards and a hue list for chips |
 | `src/App.tsx` | Shell, sidebar, theme toggle, reveal observer, pointer glow, routes |
 | `src/Pager.tsx` | Horizontal section pager (the scroll behavior) |
+| `src/Masonry.tsx` | Packs groups of expandable cards into the shortest slots so no blank space is left when cards open |
 | `src/Search.tsx`, `src/searchEngine.ts` | In-browser semantic search overlay and its engine |
 | `scripts/build-index.mjs` | Builds `public/search-index.json` (content chunks + embeddings) |
 | `src/Terminal.tsx`, `src/quant.ts` | The Paper Hands quant terminal (UI) and its backtest engine |
@@ -62,12 +63,20 @@ This is the most important layout rule. Each section is one screen, because a sc
 
 | Class | Where | Behavior |
 |---|---|---|
-| `.exp-grid` | Experience | Two columns `1.12fr / 1fr`. Row 1: hero card and a side stack (Now banner + Find me). Row 2: tech reel. Row 3: Experience card and Skills card |
-| `.grid` | generic | Two equal columns, 40px (24px in panels) gap |
-| `.grid-top` | Projects, Hackathons | `align-items: start` so an opened card grows alone |
-| `.tiles-3` | Projects, Blogs | Six-column grid: tiles 1 to 3 span 2 columns, tiles 4 and up span 3. Five items become three over two |
+| `.exp-grid` | Experience | Two columns `1.12fr / 1fr`. Row 1: hero card and a side stack (Now banner, Find me, Paper Hands). Row 2: Experience card and a right column with the toolbox card and the tech reel. Plain CSS grid; Experience is deliberately not masonry |
+| `Masonry` (`.mason`) | Projects, Blogs, Hackathons | Absolutely positioned cards packed into the shortest available slot on a 6-unit grid, so opening cards never leaves a blank band or pushes a whole row down |
 
-When a list has an odd count the last tile spans the row so no hole is left.
+### Masonry (Projects, Blogs, Hackathons)
+
+- `spans` gives each child's preferred width in units of a 6-unit grid (2 = a third, 3 = a half, 6 = full). Projects and Blogs use `[2, 2, 2, 3, 3]` (three narrow tiles over two wide ones); Hackathons uses `[3, 3, 3, 3, 6]`.
+- `alt` lets an item fall back to a narrower span when that packs without a hole (the wide tiles 4 and 5 become a third each and slot under tiles 2 and 3 when tile 1 is open).
+- Placement: for every aligned slot at every allowed width, take the leftmost one whose top is within 48 px of the highest, preferring the wider width. The 48 px tolerance keeps the designed order while collapsed and only reshuffles when a card genuinely grows.
+- Every frame a card's height changes (a `ResizeObserver` per card), positions are recomputed from live heights, so neighbours follow the expanding card smoothly and return one by one as cards collapse. A change of column glides over `--expand-dur`; a change of width transitions the same way.
+- Collapsed tiles share a height (`--tile-h: 310px` on `.pager-panel .mason`) so rows line up; the open state may grow past it.
+- Below 1000 px everything stacks in one column.
+- To use it for a new section: render the cards as direct children of `<Masonry spans={...}>` and style narrow/wide variants through `.mason-item[data-span='2'|'3']`, not `:nth-child`. `useSmoothLayout` ignores cards inside `.mason`, because Masonry positions them itself.
+
+
 
 ## 5. The pager (horizontal scrolling)
 
