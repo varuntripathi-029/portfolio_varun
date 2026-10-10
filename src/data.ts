@@ -3,7 +3,7 @@ export const profile = {
   headline:
     'I build AI systems that show their work: retrieval, forecasting, and the plumbing that keeps both honest',
   intro:
-    'Final-year ECE student at IIIT Nagpur. Currently an AI + QA intern at TIFIN AI, a J.P. Morgan-backed wealth-management platform.',
+    'Final-year ECE student at IIIT Nagpur. Currently an AI + QA intern at TIFIN AI, a wealth-management AI platform.',
   email: 'varun.tripathi2004@gmail.com',
   linkedin: 'https://www.linkedin.com/in/varun-tripathi-bb338a295/',
   github: 'https://github.com/varuntripathi-029',
@@ -24,7 +24,7 @@ export const experience: Experience[] = [
     org: 'TIFIN AI',
     period: 'Oct 2026 – Present',
     points: [
-      'TIFIN is a J.P. Morgan-backed AI platform for wealth management, working across the US, Spain and India.',
+      'TIFIN is an AI and fintech platform for wealth management, backed by J.P. Morgan, Morningstar and others, working across the US, Spain and India.',
       'Its focus areas include tax intelligence and financial LLM work.',
     ],
   },

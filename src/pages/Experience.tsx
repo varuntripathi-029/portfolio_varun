@@ -58,7 +58,7 @@ export default function Experience() {
             <span className="chip">AI + QA</span>
           </div>
           <h2>AI + QA engineer at TIFIN AI</h2>
-          <p>A J.P. Morgan-backed AI platform for wealth management. I’m there as an AI + QA engineering intern.</p>
+          <p>Since October 2026, helping test and check the quality of the AI features the platform ships.</p>
           <ul className="now-list">
             <li>HireSignal in production</li>
             <li>Zoho Catalyst 3rd runner up</li>
