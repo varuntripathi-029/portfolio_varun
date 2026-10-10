@@ -17,6 +17,8 @@
   --c-emerald: #0f8456;
   --c-vermilion: #d03e25;
   --c-violet: #7b4be0;
+  --c-magenta: #c93b86;
+  --c-teal: #0d7f8f;
   --glow: rgba(68, 82, 224, 0.1);
   --tint: 8%;
 
@@ -33,21 +35,30 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #121211;
-  --ink: #f2f1ea;
-  --ink-muted: #b7b4aa;
-  --ink-soft: #85827a;
-  --line: #2a2a27;
-  --panel: #1a1a18;
-  --raised: #242421;
-  --btn: #f2f1ea;
-  --btn-ink: #16150f;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
-  --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.4);
-  --banner-shade: rgba(0, 0, 0, 0.16);
-  --glow: rgba(255, 255, 255, 0.07);
-  --tint: 16%;
-  --dot: #55534c;
+  /* neutrals share the indigo hue (~235deg) so every surface reads as one family */
+  --bg: #0d0e15;
+  --panel: #141622;
+  --raised: #1c1f31;
+  --line: #272b40;
+  --ink: #eceefa;
+  --ink-muted: #a8adc6;
+  --ink-soft: #7a7f9a;
+  --btn: #eceefa;
+  --btn-ink: #0d0e15;
+  --dot: #4b5070;
+  --shadow: 0 1px 2px rgba(2, 3, 10, 0.4), 0 8px 24px rgba(2, 3, 10, 0.3);
+  --shadow-lift: 0 2px 4px rgba(2, 3, 10, 0.45), 0 18px 44px rgba(2, 3, 10, 0.5);
+  --banner-shade: rgba(0, 0, 0, 0);
+  --glow: rgba(125, 140, 255, 0.09);
+  --tint: 14%;
+  /* accents: same hues, a touch less chroma and lightness so they sit on the dark
+     surface instead of glowing off it */
+  --c-indigo: #4350c8;
+  --c-emerald: #12805a;
+  --c-vermilion: #c4432d;
+  --c-violet: #6e47d4;
+  --c-magenta: #b83c80;
+  --c-teal: #0f7585;
 }
 
 * {
@@ -399,19 +410,19 @@ h2.card-title {
 
 /* hero */
 .avatar {
-  width: 96px;
-  height: 96px;
-  margin-bottom: 14px;
+  width: 108px;
+  height: 135px;
+  margin-bottom: 16px;
   border-radius: 22px;
   object-fit: cover;
-  object-position: 50% 18%;
+  object-position: 50% 30%;
   background: var(--panel);
   transition: transform 0.6s var(--ease), border-radius 0.6s var(--ease);
 }
 
 .avatar:hover {
-  transform: rotate(-3deg) scale(1.05);
-  border-radius: 30px;
+  transform: rotate(-2deg) scale(1.04);
+  border-radius: 28px;
 }
 
 .hero > * {
@@ -624,15 +635,76 @@ h2.card-title {
   flex-direction: column;
   align-items: flex-start;
   gap: 14px;
-  min-height: 150px;
-  padding-right: 52px;
+  min-height: 260px;
   color: inherit;
 }
 
+.banner-head > .chips,
+.banner-head > .banner-title,
+.banner-head > .banner-teaser {
+  max-width: 52%;
+}
+
 .banner-head .toggle {
+  margin-top: auto;
+}
+
+.tile-art {
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: -28px;
+  bottom: -34px;
+  width: 46%;
+  max-width: 330px;
+  padding: 22px 26px 56px 22px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+  transition: transform 0.6s var(--ease), opacity 0.45s var(--ease-soft);
+}
+
+.tile-art ul {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 7px;
+  font-size: 14px;
+}
+
+.tile-art li {
+  padding-bottom: 7px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.art-label,
+.art-caption {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.art-value {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 520;
+  font-size: 34px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 6px;
+}
+
+.banner.is-open .tile-art {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+@media (hover: hover) {
+  .banner:not(.is-open):hover .tile-art {
+    transform: translate(-8px, -8px);
+  }
 }
 
 .banner-body {
@@ -990,6 +1062,20 @@ h2.card-title {
   .now {
     min-height: 0;
   }
+
+  .tile-art {
+    display: none;
+  }
+
+  .banner-head {
+    min-height: 0;
+  }
+
+  .banner-head > .chips,
+  .banner-head > .banner-title,
+  .banner-head > .banner-teaser {
+    max-width: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1137,4 +1223,18 @@ h2.card-title {
   background: var(--accent, var(--ink));
   border-color: var(--accent, var(--ink));
   color: #fff;
+}
+
+:root[data-theme='dark'] .banner {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+
+:root[data-theme='dark'] .hero {
+  background: radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--c-indigo) 20%, transparent), transparent 60%), var(--bg);
+}
+
+:root[data-theme='dark'] .badge,
+:root[data-theme='dark'] .skill-chip {
+  color: color-mix(in srgb, var(--accent, var(--ink)) 42%, var(--ink));
+  background: color-mix(in srgb, var(--accent, var(--ink)) 24%, transparent);
 }
