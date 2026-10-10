@@ -2037,3 +2037,227 @@ h3,
 .tiles-3 > .banner.is-open .banner-head > .banner-teaser {
   max-width: 60ch;
 }
+
+/* ---- in-browser semantic search ---- */
+.search-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin-top: -18px;
+  padding: 8px 12px 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--ink-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.35s var(--ease), color 0.35s var(--ease), transform 0.4s var(--ease);
+}
+
+.search-trigger:hover {
+  border-color: var(--ink-soft);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.search-trigger kbd {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+.search-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 12vh 16px 16px;
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
+  backdrop-filter: blur(10px);
+  animation: search-fade 0.25s var(--ease-soft) both;
+}
+
+@keyframes search-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.search {
+  width: min(680px, 100%);
+  max-height: 76vh;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  box-shadow: var(--shadow-lift);
+  animation: search-rise 0.45s var(--ease) both;
+}
+
+@keyframes search-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+  color: var(--ink);
+  font: 500 17px/1.3 var(--font-body);
+  outline: none;
+  transition: border-color 0.3s var(--ease);
+}
+
+.search-input:focus {
+  border-color: var(--c-blue);
+}
+
+.search-empty {
+  padding: 18px 4px 6px;
+}
+
+.search-empty p,
+.search-empty-note {
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.search-empty-note {
+  padding: 18px 4px 4px;
+}
+
+.search-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.search-examples button {
+  padding: 7px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background-color 0.3s var(--ease), color 0.3s var(--ease), transform 0.35s var(--ease);
+}
+
+.search-examples button:hover {
+  background: var(--ink);
+  color: var(--bg);
+  transform: translateY(-2px);
+}
+
+.search-results {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  overflow-y: auto;
+  display: grid;
+  gap: 4px;
+}
+
+.search-hit {
+  display: grid;
+  gap: 5px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.25s var(--ease);
+}
+
+.search-hit.is-active {
+  background: var(--panel);
+}
+
+.hit-top {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.hit-section {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.hit-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.hit-text {
+  color: var(--ink-muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.hit-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+.hit-bar {
+  flex: none;
+  width: 56px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.hit-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--c-emerald);
+  transition: width 0.5s var(--ease);
+}
+
+.search-foot {
+  margin-top: 14px;
+  padding: 0 4px;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+}
+
+@media (max-width: 760px) {
+  .search-trigger {
+    margin-top: 0;
+  }
+
+  .search-backdrop {
+    padding-top: 6vh;
+  }
+}

@@ -8,6 +8,7 @@ import Blogs from './pages/Blogs'
 import BlogPost from './pages/BlogPost'
 import Leadership from './pages/Leadership'
 import Pager, { type PagerSection } from './Pager'
+import Search from './Search'
 import { accentAt } from './palette'
 
 const sections: PagerSection[] = [
@@ -24,7 +25,7 @@ function currentTheme(): Theme {
   return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
 }
 
-function Sidebar() {
+function Sidebar({ onSearch }: { onSearch: () => void }) {
   const [copied, setCopied] = useState(false)
   const [theme, setTheme] = useState<Theme>(currentTheme)
 
@@ -64,6 +65,10 @@ function Sidebar() {
           </NavLink>
         ))}
       </nav>
+      <button type="button" className="search-trigger" onClick={onSearch}>
+        <span>Search</span>
+        <kbd>/</kbd>
+      </button>
       <div className="nav nav-links">
         <a href={profile.linkedin} target="_blank" rel="noreferrer">
           LinkedIn
@@ -154,18 +159,33 @@ function ScrollToTop({ enabled }: { enabled: boolean }) {
 
 export default function App() {
   const onPost = useMatch('/blogs/:slug') !== null
+  const [searchOpen, setSearchOpen] = useState(false)
   useRevealAndGlow()
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null
+      const typing = !!t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable)
+      if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) {
+        e.preventDefault()
+        setSearchOpen((o) => !o)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   return (
     <div className={`shell${onPost ? '' : ' shell--pager'}`}>
       <ScrollToTop enabled={onPost} />
-      <Sidebar />
+      <Sidebar onSearch={() => setSearchOpen(true)} />
       <main className="main">
         <Routes>
           <Route path="/blogs/:slug" element={<BlogPost />} />
           <Route path="*" element={<Pager sections={sections} />} />
         </Routes>
       </main>
+      <Search open={searchOpen} onClose={() => setSearchOpen(false)} />
     </div>
   )
 }
