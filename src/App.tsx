@@ -150,6 +150,58 @@ function useRevealAndGlow() {
   }, [])
 }
 
+// Smooths any layout shift a toggle causes. Heights already animate through <Collapse>; this catches
+// everything that changes discretely (a card reflowing to another row, a sibling re-wrapping) by
+// recording each card's position just before a toggle and gliding it from there to its new spot.
+// It applies to any `.card`, `.banner` or `.reel` automatically, so new sections need no wiring.
+function useSmoothLayout() {
+  useEffect(() => {
+    if (typeof Element.prototype.animate !== 'function') return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let timer = 0
+
+    const onClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null
+      if (!target?.closest('.expand-head, .banner-head, .tl-head') || reduce.matches) return
+      const scope = target.closest<HTMLElement>('.pager-panel') ?? document.body
+      const els = Array.from(scope.querySelectorAll<HTMLElement>('.card, .banner, .reel'))
+      // Content coordinates, so scrolling the section is never mistaken for a layout change.
+      const place = (el: HTMLElement) => {
+        const r = el.getBoundingClientRect()
+        const base = scope.getBoundingClientRect()
+        const scrolled = scope === document.body ? { x: window.scrollX, y: window.scrollY } : { x: scope.scrollLeft, y: scope.scrollTop }
+        return { x: r.left - base.left + scrolled.x, y: r.top - base.top + scrolled.y, w: r.width, h: r.height }
+      }
+      const before = new Map(els.map((el) => [el, place(el)]))
+
+      window.clearTimeout(timer)
+      // After React has committed the state change, before the first transition frame paints.
+      timer = window.setTimeout(() => {
+        const root = getComputedStyle(document.documentElement)
+        const dur = parseFloat(root.getPropertyValue('--expand-dur')) * 1000 || 710
+        const easing = root.getPropertyValue('--ease-expand').trim() || 'ease'
+        before.forEach((from, el) => {
+          const to = place(el)
+          const dx = from.x - to.x
+          const dy = from.y - to.y
+          const resized = Math.abs(from.w - to.w) > 2 || Math.abs(from.h - to.h) > 2
+          if (resized || (Math.abs(dx) < 2 && Math.abs(dy) < 2)) return
+          el.animate(
+            [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0, 0)' }],
+            { duration: dur, easing },
+          )
+        })
+      }, 0)
+    }
+
+    document.addEventListener('click', onClick, true)
+    return () => {
+      document.removeEventListener('click', onClick, true)
+      window.clearTimeout(timer)
+    }
+  }, [])
+}
+
 function ScrollToTop({ enabled }: { enabled: boolean }) {
   const { pathname } = useLocation()
   useEffect(() => {
@@ -163,6 +215,7 @@ export default function App() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [labOpen, setLabOpen] = useState(false)
   useRevealAndGlow()
+  useSmoothLayout()
 
   useEffect(() => {
     const open = () => setLabOpen(true)
