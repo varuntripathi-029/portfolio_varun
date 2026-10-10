@@ -198,10 +198,22 @@ An optional "game" reached from a collapsed card named **Paper Hands** (kicker "
 - **Learnability:** the lab opens already running a demo (SMA 20/100 on the 2020 crash). Everything has a clickable control; typing is optional and autocompletes. A plain-language verdict sentence sits under the numbers, a 3-step coach strip runs on first visit (`localStorage` key `lab-tour`), and after two misses in a period a hint appears that comes from the engine's own results.
 - **Honesty:** the footer lists every assumption and says "past data, not advice".
 
-## 9d. Toggles and card size
+## 9d. Toggles, motion and card size
 
 - Every expand toggle (cards, tiles, timeline rows) is the shared `WheelToggle`: on hover the circle rolls left half a turn and a label ("Expand" or "Collapse") opens where it was. The roll is a transform, so the card's layout never shifts, and the label never appears on touch devices.
+- **One pace for expand and collapse:** `--expand-dur` (0.71s, which is 0.85s sped up 1.2x) with `--ease-expand` (a soft ease-in-out). Change the token, not individual rules.
+- **Nothing may re-flow in a single frame.** Height changes animate through `Collapse` (`grid-template-rows` 0fr to 1fr), and grids use `align-items: start`, so a neighbour only moves as the height grows. An opened tile therefore grows downward inside its own column. It does NOT jump to a full-width row; that re-flowed every other tile in one frame and was removed.
+- **Safety net for future layouts:** `useSmoothLayout` in `App.tsx` records the position of every `.card`, `.banner` and `.reel` in the current section when any `.expand-head`, `.banner-head` or `.tl-head` is clicked, then glides whatever moved discretely from its old spot to its new one with `--expand-dur`/`--ease-expand`. It works in content coordinates, so scrolling is ignored, skips resized elements (to avoid distorting content) and respects reduced motion. New sections that use the shared components and these class names get this for free; if you introduce a new kind of card, give it the class `card` or `banner`.
 - **Do not shrink cards to fit a short window.** Tiles keep the reference's generous size. A section taller than the screen scrolls inside itself before handing over to the next section; that is the intended fallback, not a bug to fix by compacting.
+
+## 9e. Deploying to Vercel
+
+- `vercel.json` pins `framework: vite`, `buildCommand: npm run build`, `outputDirectory: dist`, a SPA rewrite that leaves real files alone, and long-cache headers for hashed assets.
+- **`installCommand` sets `ONNXRUNTIME_NODE_INSTALL=skip`.** transformers.js depends on `onnxruntime-node`, whose postinstall downloads large CUDA binaries on Linux. The site only uses the browser build, so the download is pointless and can slow or fail an install. `.npmrc` repeats the setting for local installs.
+- `engines.node` is `>=20.19`; Vercel's default Node satisfies it. Use `npm ci` (lockfile is committed).
+- The build output is about 28 MB because the onnxruntime WebAssembly runtime (about 27 MB) is shipped as a static file and loaded only on the first search. That is well within limits; do not "fix" it by loading from a CDN, since the pinned onnxruntime version is a dev build that may not exist there.
+- Imports are case-sensitive on Linux. Keep file names and import paths identical in case (a check of all relative imports passed).
+- Scripts under `scripts/` run only on a developer machine (`npm run index`, `npm run data`, `npm run test:quant`) and are not part of the Vercel build. Re-run `npm run index` after editing `src/data.ts` and commit the regenerated `public/search-index.json`.
 
 ## 10. Hard-won rules (do not repeat these bugs)
 
