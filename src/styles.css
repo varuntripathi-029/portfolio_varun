@@ -2007,3 +2007,33 @@ h3,
 .hero > .hero-id {
   animation-delay: 0.05s;
 }
+
+.text-link {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 7px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent, var(--ink)) 45%, var(--line));
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.35s var(--ease), color 0.35s var(--ease), transform 0.4s var(--ease);
+}
+
+.text-link:hover {
+  background: var(--accent, var(--ink));
+  border-color: var(--accent, var(--ink));
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* an opened tile takes the full row so its stack/results columns have room */
+.tiles-3 > .banner.is-open {
+  grid-column: 1 / -1;
+}
+
+.tiles-3 > .banner.is-open .banner-head > .banner-title,
+.tiles-3 > .banner.is-open .banner-head > .banner-teaser {
+  max-width: 60ch;
+}
