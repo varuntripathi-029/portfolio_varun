@@ -5,7 +5,7 @@ export default function Leadership() {
   return (
     <>
       <PageHead title="Leadership">
-        Work done at college: sponsorships, events and campus programmes at IIIT Nagpur.
+        College work: sponsors, events and a great deal of cold outreach at IIIT Nagpur.
       </PageHead>
       <section className="card">
         <Timeline

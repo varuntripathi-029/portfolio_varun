@@ -6,7 +6,7 @@ export default function Hackathons() {
   return (
     <>
       <PageHead title="Hackathons">
-        Four builds under a deadline in 2026: one podium, three finals.
+        Four deadlines in 2026. One podium, three finals, and a lot of code written too fast.
       </PageHead>
       <div className="grid grid-top">
         {hackathons.map((h, i) => (

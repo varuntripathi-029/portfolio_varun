@@ -5,7 +5,7 @@ export default function Projects() {
   return (
     <>
       <PageHead title="Projects">
-        AI systems I’ve built end to end, from retrieval and inference to the interface on top.
+        Built end to end: retrieval, inference, the interface on top, and the tests nobody asked for.
       </PageHead>
       <div className="grid grid-top tiles-3">
         {projects.map((p) => (

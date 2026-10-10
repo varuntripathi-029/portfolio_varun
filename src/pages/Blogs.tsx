@@ -6,7 +6,7 @@ export default function Blogs() {
   return (
     <>
       <PageHead title="Blogs">
-        Write-ups on fintech products and the systems behind them. Some come with a working demo.
+        Write-ups on fintech products and the systems under them. Some come with a working demo you can break.
       </PageHead>
       <div className="grid grid-top tiles-3">
         {blogs.map((b) => (

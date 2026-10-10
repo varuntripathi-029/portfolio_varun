@@ -33,7 +33,14 @@ export default function Experience() {
   return (
     <div className="exp-grid">
       <section className="card hero">
-        <img className="avatar" src={profile.photo} alt="Portrait of Varun Tripathi" width={108} height={135} />
+        <div className="hero-id">
+          <img className="avatar" src={profile.photo} alt="Portrait of Varun Tripathi" width={108} height={135} />
+          <span className="scribble" aria-hidden="true">
+            yes, a real
+            <br />
+            person
+          </span>
+        </div>
         <p className="hello">Hi, I’m {profile.name}</p>
         <h1>
           <Words text={profile.headline} />
@@ -51,7 +58,7 @@ export default function Experience() {
             <span className="chip">Agentic AI</span>
           </div>
           <h2>AI + QA engineer at TIFIN AI</h2>
-          <p>Agentic infrastructure for wealth management, backed by J.P. Morgan.</p>
+          <p>Agentic infrastructure for wealth managers, backed by J.P. Morgan. Money is the one place an agent can’t improvise.</p>
           <ul className="now-list">
             <li>HireSignal in production</li>
             <li>Zoho Catalyst 3rd runner up</li>
@@ -95,7 +102,7 @@ export default function Experience() {
       </section>
 
       <ExpandCard
-        title="What I work with"
+        title="The toolbox"
         badge={skills.map((s) => s.group).join(' · ')}
         accent={accentAt(3)}
       >
