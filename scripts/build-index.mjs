@@ -29,6 +29,13 @@ for (const s of data.skills) {
   add('/', 'Experience', `Skills: ${s.group}`, `${s.group} skills and tools: ${s.items}`)
 }
 
+add(
+  '/',
+  'Experience',
+  'Paper Hands (quant lab)',
+  'Paper Hands is a quant backtest terminal on 13 years of real Nifty 50 index-fund prices. Pick a trading rule, run it, and see whether it beats buy-and-hold after charges and capital-gains tax. Sharpe ratio, drawdown, volatility, rolling-window win rates, trade blotter. Finance, trading, backtesting, quant, simulation, game.',
+)
+
 for (const p of data.projects) {
   const alias = ALIASES[p.slug] ?? ''
   add('/projects', 'Projects', p.title, `${p.title}. ${p.tagline}. ${p.summary}`, { group: p.title })
