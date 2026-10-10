@@ -113,11 +113,24 @@ Expandable white cards tint toward their accent on hover and when open: 8% in li
 
 ## 7. Typography
 
-- Display: **Instrument Sans**, weights 500 and 600, tight tracking (`-0.025em` to `-0.03em`). Used for hero, titles, tile titles.
-- Body: **Inter**, 400 to 600.
-- Scale: hero 27 to 30px, tile titles 28px (20px in narrow blog tiles), card titles 24px, body 16px, tile teaser 18px, chips 12px.
-- All caps appears only on tile chips (letter-spacing 0.09em) because the reference does it. Avoid adding more uppercase labels.
+Four families, each with one job. Do not use a family outside its role.
+
+| Role | Family | Used for |
+|---|---|---|
+| Display | **Fraunces** (variable: opsz, wght, SOFT 80, WONK 0) | Hero headline, page titles, tile titles, card titles, blog headings, big metric numbers |
+| Reading and UI | **Inter** 400 to 600 | Body copy, nav, buttons, teasers |
+| Facts | **JetBrains Mono** 400 and 500 | Tile chips, dates, kickers, badges, stack lists, skill and reel chips, placeholder lists |
+| Voice | **Caveat** 500 and 600 | The greeting and the small scribble beside the portrait. One or two uses per page at most |
+
+- Why Fraunces: a soft, slightly warm serif that sits well with the earth pigment palette and keeps the site from reading as another sans-serif template. Weight 480 to 500, tracking -0.02em.
+- Why mono for facts: dates, tags and stacks are data, and mono makes them scan as data.
+- Caveat is the human aside. Overusing it turns the site into a scrapbook; keep it to short phrases.
+- Scale: hero 27px, tile titles 28px (20px in the narrow blog tiles), card titles 24px, blog headings 22px, body 16 to 17px, tile teaser 18px, chips 11 to 13px.
+- Uppercase appears only on tile chips (mono, tracked) because the reference does it. Do not add more uppercase labels.
 - Line length stays under about 68ch in prose.
+
+### Copy voice
+Direct and a little dry. Numbers stay exact, the jokes sit in the framing, never in the facts. Examples already in the site: "886+ sources, one deterministic score, zero vibes", "Your laptop does the coding. Your phone holds the leash." Keep claims true: do not invent results, and never turn a figure into a rounder one for the sake of a line.
 
 ## 8. Cards
 
