@@ -93,7 +93,7 @@ export default function Experience() {
         >
           <p>
             Most trading rules look brilliant in a spreadsheet and fall apart at the till, where every trade is billed for
-            charges and, if you sold inside a year, 20% tax. Paper Hands runs your rule on 13 years of real Nifty 50
+            charges and, if you sold inside a year, short-term capital-gains tax. Paper Hands runs your rule on 13 years of real Nifty 50
             index-fund prices, 2013 to 2026, and bills it exactly that way. Then it sets the result against the opponent
             that never trades and never complains: buy and hold.
           </p>

@@ -627,8 +627,11 @@ export default function Terminal({ open, onClose }: { open: boolean; onClose: ()
             </div>
 
             <footer className="t-foot">
-              Past data, not advice. Real daily NAVs of a Nifty 50 index fund ({series.source}); long-only, all-in/all-out at the close, ₹10,00,000 start, modelled as an index ETF with ₹20 plus 0.13% per trade,
-              20% short-term and 12.5% long-term capital-gains tax above ₹1.25L per financial year, 4% cess, losses not carried forward, 6.5% risk-free rate.
+              Past data, not advice. Real daily NAVs of a Nifty 50 index fund ({series.source}). Long-only and all-in or all-out;
+              a signal at one close is filled at the next close. ₹10,00,000 start, modelled as an index ETF with ₹20 plus 0.13% per
+              trade. Cash earns nothing while out of the market. Tax follows the law on the sale date: short-term 15% and long-term
+              10% above ₹1L until 22 Jul 2024, then 20% and 12.5% above ₹1.25L; long-term gains exempt before 1 Apr 2018; gains up to
+              31 Jan 2018 grandfathered; 3% to 4% cess; surcharge and loss set-off not modelled. 6.5% risk-free rate for Sharpe.
             </footer>
           </>
         )}
