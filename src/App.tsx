@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useState, type CSSProperties } from 'react'
-import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
+import { NavLink, Route, Routes, useLocation, useMatch } from 'react-router-dom'
 import { profile } from './data'
 import Experience from './pages/Experience'
 import Projects from './pages/Projects'
@@ -7,14 +7,15 @@ import Hackathons from './pages/Hackathons'
 import Blogs from './pages/Blogs'
 import BlogPost from './pages/BlogPost'
 import Leadership from './pages/Leadership'
+import Pager, { type PagerSection } from './Pager'
 import { accentAt } from './palette'
 
-const sections = [
-  { to: '/', label: 'Experience' },
-  { to: '/projects', label: 'Projects' },
-  { to: '/hackathons', label: 'Hackathons' },
-  { to: '/blogs', label: 'Blogs' },
-  { to: '/leadership', label: 'Leadership' },
+const sections: PagerSection[] = [
+  { path: '/', label: 'Experience', node: <Experience /> },
+  { path: '/projects', label: 'Projects', node: <Projects /> },
+  { path: '/hackathons', label: 'Hackathons', node: <Hackathons /> },
+  { path: '/blogs', label: 'Blogs', node: <Blogs /> },
+  { path: '/leadership', label: 'Leadership', node: <Leadership /> },
 ]
 
 type Theme = 'light' | 'dark'
@@ -53,10 +54,9 @@ function Sidebar() {
       <nav className="nav" aria-label="Sections">
         {sections.map((n, i) => (
           <NavLink
-            key={n.to}
-            to={n.to}
-            end={n.to === '/'}
-            viewTransition
+            key={n.path}
+            to={n.path}
+            end={n.path === '/'}
             className="nav-link"
             style={{ '--accent': accentAt(i) } as CSSProperties}
           >
@@ -98,22 +98,30 @@ function useRevealAndGlow() {
 
   useLayoutEffect(() => {
     const els = Array.from(
-      document.querySelectorAll<HTMLElement>('.card:not(.hero), .banner, .page-head, .reel, .back'),
-    )
+      document.querySelectorAll<HTMLElement>(
+        '.card:not(.hero), .banner, .page-head, .reel, .back',
+      ),
+    ).filter((el) => !el.hasAttribute('data-in'))
     els.forEach((el) => el.setAttribute('data-reveal', ''))
+
+    // React owns `class`, so reveal state lives in a data attribute it never rewrites.
     const io = new IntersectionObserver(
       (entries) => {
         const entering = entries
           .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left)
+          .sort(
+            (a, b) =>
+              a.boundingClientRect.top - b.boundingClientRect.top ||
+              a.boundingClientRect.left - b.boundingClientRect.left,
+          )
         entering.forEach((e, i) => {
           const el = e.target as HTMLElement
           el.style.setProperty('--d', `${Math.min(i, 5) * 80}ms`)
-          el.classList.add('is-in')
+          el.setAttribute('data-in', '')
           io.unobserve(el)
         })
       },
-      { threshold: 0.08, rootMargin: '0px 0px -6% 0px' },
+      { threshold: 0.08, rootMargin: '0px 0px -4% 0px' },
     )
     els.forEach((el) => io.observe(el))
     return () => io.disconnect()
@@ -136,33 +144,27 @@ function useRevealAndGlow() {
   }, [])
 }
 
-function ScrollToTop() {
+function ScrollToTop({ enabled }: { enabled: boolean }) {
   const { pathname } = useLocation()
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [pathname])
+    if (enabled) window.scrollTo(0, 0)
+  }, [pathname, enabled])
   return null
 }
 
 export default function App() {
-  const location = useLocation()
+  const onPost = useMatch('/blogs/:slug') !== null
   useRevealAndGlow()
+
   return (
-    <div className="shell">
-      <ScrollToTop />
+    <div className={`shell${onPost ? '' : ' shell--pager'}`}>
+      <ScrollToTop enabled={onPost} />
       <Sidebar />
       <main className="main">
-        <div className="page" key={location.pathname}>
-        <Routes location={location}>
-          <Route path="/" element={<Experience />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/hackathons" element={<Hackathons />} />
-          <Route path="/blogs" element={<Blogs />} />
+        <Routes>
           <Route path="/blogs/:slug" element={<BlogPost />} />
-          <Route path="/leadership" element={<Leadership />} />
-          <Route path="*" element={<Experience />} />
+          <Route path="*" element={<Pager sections={sections} />} />
         </Routes>
-        </div>
       </main>
     </div>
   )
