@@ -1456,21 +1456,6 @@ h2.card-title {
 }
 
 /* an odd last tile spans the row instead of leaving a hole */
-.grid-top > .banner:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
-}
-
-.grid-top > .banner:last-child:nth-child(odd) .tile-art {
-  width: 34%;
-}
-
-.grid-top > .banner:last-child:nth-child(odd) .banner-head > .chips,
-.grid-top > .banner:last-child:nth-child(odd) .banner-head > .banner-title,
-.grid-top > .banner:last-child:nth-child(odd) .banner-head > .banner-teaser,
-.grid-top > .banner:last-child:nth-child(odd) .banner-head > .toggle-row {
-  max-width: 56%;
-}
-
 @media (max-width: 1000px) {
   .exp-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -1672,10 +1657,6 @@ h2.card-title {
   }
 }
 
-.grid-top > .banner:last-child:nth-child(odd) .tile-art {
-  width: 40%;
-}
-
 @media (max-width: 1000px) {
   .banner-head > .chips,
   .banner-head > .banner-title,
@@ -1816,36 +1797,35 @@ h2.card-title {
   --tile-h: clamp(170px, calc((100vh - 370px) / 2 - 56px), 280px);
 }
 
-.tiles-3 > .banner:nth-child(-n + 3) {
+.tiles-3 .mason-item[data-span='2'] > .mason-inner > .banner {
   grid-column: span 2;
 }
 
-.tiles-3 > .banner:nth-child(n + 4),
-.tiles-3 > .banner:last-child:nth-child(odd) {
+.tiles-3 .mason-item[data-span='3'] > .mason-inner > .banner {
   grid-column: span 3;
 }
 
-.tiles-3 > .banner:nth-child(-n + 3) .banner-head > .chips,
-.tiles-3 > .banner:nth-child(-n + 3) .banner-head > .banner-title,
-.tiles-3 > .banner:nth-child(-n + 3) .banner-head > .banner-teaser,
-.tiles-3 > .banner:nth-child(-n + 3) .banner-head > .toggle-row {
+.tiles-3 .mason-item[data-span='2'] > .mason-inner > .banner .banner-head > .chips,
+.tiles-3 .mason-item[data-span='2'] > .mason-inner > .banner .banner-head > .banner-title,
+.tiles-3 .mason-item[data-span='2'] > .mason-inner > .banner .banner-head > .banner-teaser,
+.tiles-3 .mason-item[data-span='2'] > .mason-inner > .banner .banner-head > .toggle-row {
   max-width: 56%;
 }
 
-.tiles-3 > .banner:nth-child(-n + 3) .banner-title {
+.tiles-3 .mason-item[data-span='2'] > .mason-inner > .banner .banner-title {
   font-size: 20px;
 }
 
-.tiles-3 > .banner:nth-child(-n + 3) .banner-teaser {
+.tiles-3 .mason-item[data-span='2'] > .mason-inner > .banner .banner-teaser {
   font-size: 14px;
 }
 
-.tiles-3 > .banner:nth-child(-n + 3) .tile-art {
+.tiles-3 .mason-item[data-span='2'] > .mason-inner > .banner .tile-art {
   width: 50%;
   top: 56px;
 }
 
-.tiles-3 > .banner:nth-child(n + 4) .tile-art {
+.tiles-3 .mason-item[data-span='3'] > .mason-inner > .banner .tile-art {
   width: 40%;
   top: 56px;
 }
@@ -2038,7 +2018,7 @@ h3,
 }
 
 /* an opened tile grows downward inside its own column: no re-flow, so neighbours move with the height animation */
-.tiles-3 > .banner:nth-child(-n + 3) .panel {
+.tiles-3 .mason-item[data-span='2'] > .mason-inner > .banner .panel {
   grid-template-columns: minmax(0, 1fr);
 }
 
@@ -2988,4 +2968,30 @@ h3,
 .banner.is-open .tile-art,
 .banner .tile-art {
   transition: transform var(--expand-dur) var(--ease-expand), opacity calc(var(--expand-dur) * 0.8) var(--ease-soft);
+}
+
+/* ---- masonry: cards are absolutely placed by Masonry.tsx, each in the shortest available slot ---- */
+.mason {
+  position: relative;
+}
+
+.mason-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.mason-inner {
+  width: 100%;
+}
+
+/* collapsed tiles share one height so their rows line up; the open state may grow past it */
+.pager-panel .mason {
+  --tile-h: 310px;
+}
+
+/* an item can change width when the masonry re-packs; let it glide instead of snapping */
+.mason-item {
+  transition: width var(--expand-dur) var(--ease-expand);
 }
