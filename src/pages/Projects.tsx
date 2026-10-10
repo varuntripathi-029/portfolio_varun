@@ -15,6 +15,16 @@ export default function Projects() {
             chips={[...p.tags, ...(p.status ? [p.status] : [])]}
             title={p.title}
             teaser={p.tagline}
+            art={
+              <>
+                <span className="art-label">Stack</span>
+                <ul>
+                  {p.stack.slice(0, 4).map((s) => (
+                    <li key={s}>{s}</li>
+                  ))}
+                </ul>
+              </>
+            }
           >
             <p className="banner-summary">{p.summary}</p>
             <div className="panel">

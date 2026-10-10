@@ -16,6 +16,12 @@ export default function Blogs() {
             chips={[b.org, ...b.tags]}
             title={b.title}
             teaser={b.tagline}
+            art={
+              <>
+                <span className="art-value">{b.metric.value}</span>
+                <span className="art-caption">{b.metric.label}</span>
+              </>
+            }
           >
             <p className="banner-summary">{b.summary}</p>
             <div className="actions">

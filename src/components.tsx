@@ -130,12 +130,14 @@ export function ExpandBanner({
   chips,
   title,
   teaser,
+  art,
   children,
 }: {
   color: string
   chips: string[]
   title: string
   teaser: string
+  art?: ReactNode
   children: ReactNode
 }) {
   const [open, setOpen] = useState(false)
@@ -160,6 +162,11 @@ export function ExpandBanner({
         <span className="banner-teaser">{teaser}</span>
         <span className="toggle toggle-light" aria-hidden="true" />
       </button>
+      {art && (
+        <div className="tile-art" aria-hidden="true">
+          {art}
+        </div>
+      )}
       <div id={id}>
         <Collapse open={open}>
           <div className="banner-body">{children}</div>
