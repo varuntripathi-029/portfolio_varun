@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom'
 import { blogs } from '../data'
 import { ExpandBanner, PageHead, Shot } from '../components'
+import Masonry from '../Masonry'
+
+const SPANS = [2, 2, 2, 3, 3]
+const ALT = [undefined, undefined, undefined, 2, 2]
 
 export default function Blogs() {
   return (
@@ -8,7 +12,7 @@ export default function Blogs() {
       <PageHead title="Blogs">
         Write-ups on fintech products and the systems under them. Some come with a working demo you can break.
       </PageHead>
-      <div className="grid grid-top tiles-3">
+      <Masonry spans={SPANS} alt={ALT} className="tiles-3">
         {blogs.map((b) => (
           <ExpandBanner
             key={b.slug}
@@ -45,7 +49,7 @@ export default function Blogs() {
             </div>
           </ExpandBanner>
         ))}
-      </div>
+      </Masonry>
     </>
   )
 }

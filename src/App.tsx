@@ -164,7 +164,7 @@ function useSmoothLayout() {
       const target = e.target as HTMLElement | null
       if (!target?.closest('.expand-head, .banner-head, .tl-head') || reduce.matches) return
       const scope = target.closest<HTMLElement>('.pager-panel') ?? document.body
-      const els = Array.from(scope.querySelectorAll<HTMLElement>('.card, .banner, .reel'))
+      const els = Array.from(scope.querySelectorAll<HTMLElement>('.card, .banner, .reel')).filter((el) => !el.closest('.mason'))
       // Content coordinates, so scrolling the section is never mistaken for a layout change.
       const place = (el: HTMLElement) => {
         const r = el.getBoundingClientRect()
