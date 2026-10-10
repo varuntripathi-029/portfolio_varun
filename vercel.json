@@ -1,0 +1,3 @@
+{
+  "rewrites": [{ "source": "/((?!varun_resume_aiqa.pdf|assets/).*)", "destination": "/index.html" }]
+}
