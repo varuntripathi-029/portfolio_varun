@@ -35,6 +35,7 @@
   --font-display: Fraunces, 'Iowan Old Style', Georgia, serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
   --font-hand: Caveat, 'Segoe Print', cursive;
+  --font-poster: 'Bricolage Grotesque', Fraunces, Georgia, serif;
 }
 
 :root[data-theme='dark'] {
@@ -2994,4 +2995,249 @@ h3,
 /* an item can change width when the masonry re-packs; let it glide instead of snapping */
 .mason-item {
   transition: width var(--expand-dur) var(--ease-expand);
+}
+
+/* ---- hackathons: colored tiles, organiser passes and a results strip ---- */
+.hack-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: -6px 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.hack-strip li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.hack-strip b {
+  font-family: var(--font-poster);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.hack-strip span {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.pager-panel .mason.hack {
+  --tile-h: 250px;
+}
+
+/* the result chip leads, in solid white, like a medal */
+.hack .banner-head .chips .chip:first-child {
+  background: #fff;
+  color: #16150f;
+  font-weight: 600;
+}
+
+.pass {
+  position: relative;
+  padding: 16px 20px 14px;
+  border-radius: 16px;
+  background: #fbfaf7;
+  color: #1c1b16;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.pass-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.22);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #4a4740;
+}
+
+.pass-head img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.pass-value {
+  margin: 12px 0 0;
+  font-family: var(--font-poster);
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #1c1b16 !important;
+}
+
+.pass-label {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: #4a4740 !important;
+}
+
+.pass-foot {
+  margin: 12px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #8a867c !important;
+}
+
+.hack .tile-art {
+  top: 54px;
+  width: 50%;
+}
+
+.banner-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.banner-list li {
+  padding-left: 16px;
+  position: relative;
+}
+
+.banner-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* a blog write-up arrives from the right, like every section does */
+.post {
+  animation: post-in 0.7s var(--ease-expand) both;
+}
+
+@keyframes post-in {
+  from {
+    opacity: 0;
+    transform: translateX(56px);
+  }
+}
+
+/* ---- phones: the same section pager, driven by vertical swipes ---- */
+@media (max-width: 760px) {
+  .shell--pager {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    padding: 10px;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .shell--pager .sidebar {
+    flex: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .shell--pager .sidebar .nav {
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+
+  .shell--pager .sidebar .nav-link {
+    padding: 7px 12px;
+    white-space: nowrap;
+  }
+
+  .shell--pager .sidebar .nav-link::before {
+    display: none;
+  }
+
+  .shell--pager .sidebar .nav-links {
+    display: none;
+  }
+
+  .shell--pager .sidebar .search-trigger {
+    flex: none;
+    width: auto;
+    margin: 0;
+  }
+
+  .shell--pager .sidebar .theme-toggle {
+    flex: none;
+    margin: 0;
+  }
+
+  .shell--pager .main {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+  }
+
+  .shell--pager .pager-wrap {
+    height: 100%;
+  }
+
+  .shell--pager .pager {
+    display: flex;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .shell--pager .pager-panel {
+    height: 100%;
+    overflow-y: auto;
+    padding: 4px 4px 76px;
+  }
+
+  .shell--pager .pager-dots {
+    display: flex;
+    bottom: 10px;
+  }
+}
+
+/* tickets sit fully inside the tile instead of bleeding off its edge */
+.hack .tile-art {
+  right: 22px;
+  width: 48%;
+  max-width: 330px;
+}
+
+/* phones: full-width tile text, and the hackathon tickets sit under the title instead of vanishing */
+@media (max-width: 760px) {
+  .banner-head > .chips,
+  .banner-head > .banner-title,
+  .banner-head > .banner-teaser,
+  .banner-head > .toggle-row {
+    max-width: none;
+  }
+
+  .pager-panel .mason {
+    --tile-h: 0px;
+  }
+
+  .hack .tile-art {
+    display: block;
+    position: static;
+    width: auto;
+    max-width: none;
+    margin: 6px 0 0;
+  }
 }
