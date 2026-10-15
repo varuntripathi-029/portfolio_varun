@@ -14,6 +14,11 @@ const SIDE_PUSH = 70
 // (pixels per millisecond).
 const DRAG_SHARE = 0.14
 const DRAG_FLING = 0.6
+// Elastic stretch past the top or bottom of a section: the furthest it can be pulled (px), how
+// much of the scroll it follows, and how long after the last scroll it springs back.
+const STRETCH_MAX = 84
+const STRETCH_PULL = 0.5
+const STRETCH_IDLE = 75
 // How far a vertical swipe must travel to count as "next" or "previous".
 const SWIPE = 90
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
@@ -114,6 +119,21 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     let last = 0
     let pushed = 0
     let sideways = false
+    let stretch = 0
+    let stretched: HTMLElement | null = null
+    let release = 0
+
+    const spring = () => {
+      const p = stretched
+      stretched = null
+      stretch = 0
+      if (!p) return
+      p.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.85, 0.25, 1.15)'
+      p.style.transform = ''
+      window.setTimeout(() => {
+        if (p.style.transform === '') p.style.transition = ''
+      }, 440)
+    }
 
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey) return
@@ -125,7 +145,31 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
         sideways = Math.abs(e.deltaX) > Math.abs(e.deltaY)
       }
       last = now
-      if (!sideways) return
+      if (!sideways) {
+        // Vertical: scroll inside the section; past its top or bottom, stretch like rubber.
+        const panel = panels.current[current.current]
+        if (!panel || busy.current) return
+        const dy = e.deltaY
+        const atEdge = dy < 0 ? atTop(panel) : atBottom(panel)
+        const relaxing = stretch !== 0 && Math.sign(stretch) === -Math.sign(dy) * -1
+        if (!atEdge && stretch === 0) return
+        e.preventDefault()
+        if (stretched && stretched !== panel) spring()
+        stretched = panel
+        if (atEdge && !relaxing) {
+          stretch -= dy * STRETCH_PULL * (1 - Math.min(Math.abs(stretch) / STRETCH_MAX, 1))
+        } else {
+          // scrolling back the other way eases the stretch off before real scrolling resumes
+          stretch -= dy
+          if (Math.sign(stretch) !== Math.sign(stretch + dy)) stretch = 0
+        }
+        stretch = Math.max(-STRETCH_MAX, Math.min(STRETCH_MAX, stretch))
+        panel.style.transition = 'none'
+        panel.style.transform = `translate3d(0, ${stretch}px, 0)`
+        window.clearTimeout(release)
+        release = window.setTimeout(spring, STRETCH_IDLE)
+        return
+      }
 
       e.preventDefault()
       if (busy.current || consumed.current) return
@@ -138,7 +182,10 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     }
 
     el.addEventListener('wheel', onWheel, { passive: false })
-    return () => el.removeEventListener('wheel', onWheel)
+    return () => {
+      window.clearTimeout(release)
+      el.removeEventListener('wheel', onWheel)
+    }
   }, [go])
 
   // Mouse: press, drag sideways and let go. The page follows the pointer, then settles on the
