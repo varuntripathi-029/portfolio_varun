@@ -18,7 +18,7 @@ const DRAG_FLING = 0.6
 // much of the scroll it follows, and how long after the last scroll it springs back.
 const STRETCH_MAX = 24
 const STRETCH_PULL = 0.5
-const STRETCH_IDLE = 40
+const STRETCH_IDLE = 30
 // How far a vertical swipe must travel to count as "next" or "previous".
 const SWIPE = 90
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
@@ -128,11 +128,11 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
       stretched = null
       stretch = 0
       if (!p) return
-      p.style.transition = 'transform 0.16s cubic-bezier(0.2, 0.8, 0.3, 1)'
+      p.style.transition = 'transform 0.07s cubic-bezier(0.2, 0.8, 0.3, 1)'
       p.style.transform = ''
       window.setTimeout(() => {
         if (p.style.transform === '') p.style.transition = ''
-      }, 200)
+      }, 110)
     }
 
     const onWheel = (e: WheelEvent) => {
