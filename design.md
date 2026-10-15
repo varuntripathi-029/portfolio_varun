@@ -135,21 +135,23 @@ Expandable white cards tint toward their accent on hover and when open: 8% in li
 
 ## 7. Typography
 
-Four families, each with one job. Do not use a family outside its role.
+Each family has one job. Do not use a family outside its role.
 
 | Role | Family | Used for |
 |---|---|---|
-| Display | **Fraunces** (variable: opsz, wght, SOFT 80, WONK 0) | Hero headline, page titles, tile titles, card titles, blog headings, big metric numbers |
-| Reading and UI | **Inter** 400 to 600 | Body copy, nav, buttons, teasers |
-| Facts | **JetBrains Mono** 400 and 500 | Tile chips, dates, kickers, badges, stack lists, skill and reel chips, placeholder lists |
-| Voice | **Caveat** 500 and 600 | The greeting and the small scribble beside the portrait. One or two uses per page at most |
+| Titles that grab | **Bricolage Grotesque** 600 to 800 (variable: opsz, wdth) | Tile titles, card titles, timeline titles, blog chapter headings and post title, big numbers. Condensed to wdth 86 in narrow tiles, 92 to 94 elsewhere |
+| Page titles and voice | **Fraunces** (variable: opsz, wght, SOFT 100, WONK 1, with italics) | Hero headline, page titles, and the italic one-line teaser under every title |
+| Reading | **Fraunces** roman (SOFT 50, WONK 0) | Summaries, expanded card bodies, timeline lines, blog prose, page intros |
+| Small UI | **Inter** 400 to 600 | Nav, buttons, forms, small notes |
+| Facts | **JetBrains Mono** 400 and 500 | Tile chips, dates, kickers, badges, stack lists, skill and reel chips, chapter numbers |
+| Voice | **Caveat** 500 and 600 | The greeting and the small scribble beside the portrait, and the one `.aside` line. One or two uses per page at most |
 
-- Why Fraunces: a soft, slightly warm serif that sits well with the earth pigment palette and keeps the site from reading as another sans-serif template. Weight 480 to 500, tracking -0.02em.
-- Why mono for facts: dates, tags and stacks are data, and mono makes them scan as data.
-- Caveat is the human aside. Overusing it turns the site into a scrapbook; keep it to short phrases.
-- Scale: hero 27px, tile titles 28px (20px in the narrow blog tiles), card titles 24px, blog headings 22px, body 16 to 17px, tile teaser 18px, chips 11 to 13px.
-- Uppercase appears only on tile chips (mono, tracked) because the reference does it. Do not add more uppercase labels.
-- Line length stays under about 68ch in prose.
+- **Hierarchy by contrast, not size.** A title is a bold grotesque, its teaser is an italic serif, the body is an upright serif and the facts are mono. Four clearly different textures make the order of reading obvious without making anything bigger.
+- **Why this pairing:** Bricolage has an ink-trap quirkiness that suits the earth palette; Fraunces is warm and bookish; together they read as editorial, not as another sans-serif template. Inter is kept small and functional.
+- **Reading comfort:** prose is 17 to 18px at line-height 1.62 to 1.68, under about 68ch, with `text-wrap: pretty`; headings use `text-wrap: balance`. Numbers in prose stay lining (not old-style) so they scan as numbers.
+- **Chapters:** blog sections are numbered with a mono counter (`01`, `02`...) above a Bricolage heading, and the first paragraph has a drop cap. The counter is CSS only.
+- Uppercase appears only on tile chips (mono, tracked). Do not add more uppercase labels.
+- Bricolage is no longer limited to the hackathon organiser name, but keep it to titles and numbers; never set paragraphs in it.
 
 ### Copy voice
 Direct and a little dry. Numbers stay exact, the jokes sit in the framing, never in the facts. Examples already in the site: "886+ sources, one deterministic score, zero vibes", "Your laptop does the coding. Your phone holds the leash." Keep claims true: do not invent results, and never turn a figure into a rounder one for the sake of a line.
@@ -280,4 +282,5 @@ An optional "game" reached from a collapsed card named **Paper Hands** (kicker "
 - **Emails** are opt-in only: the form under Find me (`Subscribe.tsx`) says what the address is used for, has a hidden honeypot field and a per-client hourly limit.
 - **/admin** (`pages/Admin.tsx`): not linked anywhere, `noindex` by meta and `X-Robots-Tag`. The passphrase is checked on the server with a constant-time compare, with a lockout of 10 wrong tries per hour per client. Shows visitors, visits, section views, 30-day bars, sections, referrers, countries, and the email list with copy-all and CSV.
 - **Local:** `npm run dev` serves `/api/pulse` through a small Vite plugin using `.env.local`. Use `STATS_PREFIX=test` there and delete `test:*` keys afterwards.
+- **Quarterly reset:** counts are stored per calendar month (`pf:YYYY-MM:...`) and every key is set to expire at 00:00 IST on 1 Jan, 1 Apr, 1 Jul and 1 Oct (`EXPIREAT`), so each quarter starts from zero with no cron job and the free database stays small. `/admin` shows the whole quarter or any one of its three months (unique visitors across months use `PFCOUNT` over several keys, so they are not double counted). Emails are the one thing that is never reset.
 - Never add the admin path to the sidebar, search index or sitemap, and never print the passphrase or tokens in logs or chat.

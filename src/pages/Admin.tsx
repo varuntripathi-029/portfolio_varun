@@ -7,7 +7,7 @@ const num = (n: number) => n.toLocaleString('en-IN')
 function Bars({ days }: { days: AdminData['days'] }) {
   const top = Math.max(1, ...days.map((d) => d.views))
   return (
-    <div className="adm-bars" role="img" aria-label="Views per day, last 30 days">
+    <div className="adm-bars" role="img" aria-label="Views per day">
       {days.map((d) => (
         <div key={d.d} className="adm-bar" title={`${d.d}: ${d.views} views, ${d.unique} visitors`}>
           <span style={{ height: `${Math.max(2, (d.views / top) * 100)}%` }} />
@@ -36,6 +36,7 @@ function Rows({ rows, empty }: { rows: [string, number][]; empty: string }) {
 export default function Admin() {
   const [pass, setPass] = useState('')
   const [data, setData] = useState<AdminData | null>(null)
+  const [scope, setScope] = useState('all')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -48,10 +49,10 @@ export default function Admin() {
     return () => m.remove()
   }, [])
 
-  const open = async (p: string) => {
+  const open = async (p: string, s = scope) => {
     setBusy(true)
     setError('')
-    const r = await loadAdmin(p)
+    const r = await loadAdmin(p, s)
     setBusy(false)
     if (r.data) {
       setData(r.data)
@@ -85,6 +86,17 @@ export default function Admin() {
     }
     if (saved) void open(saved)
   }, [])
+
+  const pick = (s: string) => {
+    setScope(s)
+    let saved: string | null = null
+    try {
+      saved = sessionStorage.getItem(PASS)
+    } catch {
+      /* none */
+    }
+    if (saved) void open(saved, s)
+  }
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
@@ -141,6 +153,20 @@ export default function Admin() {
     <div className="adm">
       <h1 className="adm-title">Admin</h1>
 
+      <div className="adm-scope" role="tablist" aria-label="Period">
+        <button type="button" role="tab" aria-selected={scope === 'all'} onClick={() => pick('all')}>
+          Whole quarter
+        </button>
+        {data.months.map((m) => (
+          <button key={m.key} type="button" role="tab" aria-selected={scope === m.key} onClick={() => pick(m.key)}>
+            {m.label}
+          </button>
+        ))}
+        <span className="adm-reset">
+          {data.quarter} · counts start again on {new Date(data.resets).toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })}
+        </span>
+      </div>
+
       <div className="adm-stats">
         <div className="card">
           <p className="adm-n">{num(data.unique)}</p>
@@ -161,7 +187,7 @@ export default function Admin() {
       </div>
 
       <section className="card">
-        <h2 className="card-title card-title-sm">Last 30 days</h2>
+        <h2 className="card-title card-title-sm">{scope === 'all' ? 'Each day this quarter' : 'Each day this month'}</h2>
         <Bars days={data.days} />
       </section>
 
@@ -207,7 +233,7 @@ export default function Admin() {
       </section>
 
       <p className="adm-fine">
-        Counted without cookies or IP addresses. Your own browser is left out once you have signed in here.
+        Counted without cookies or IP addresses. Your own browser is left out once you have signed in here. Counts are cleared at the start of each quarter so the free database never fills up. Emails are kept.
       </p>
     </div>
   )

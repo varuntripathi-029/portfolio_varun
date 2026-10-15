@@ -70,6 +70,10 @@ export async function subscribe(email: string, website: string): Promise<'ok' | 
 }
 
 export type AdminData = {
+  quarter: string
+  resets: string
+  months: { key: string; label: string }[]
+  scope: string
   views: number
   visits: number
   unique: number
@@ -81,12 +85,12 @@ export type AdminData = {
   emails: { email: string; at: string }[]
 }
 
-export async function loadAdmin(passphrase: string): Promise<{ data?: AdminData; error?: 'wrong' | 'locked' | 'down' }> {
+export async function loadAdmin(passphrase: string, scope = 'all'): Promise<{ data?: AdminData; error?: 'wrong' | 'locked' | 'down' }> {
   try {
     const r = await fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ op: 'admin', passphrase }),
+      body: JSON.stringify({ op: 'admin', passphrase, scope }),
     })
     if (r.status === 401) return { error: 'wrong' }
     if (r.status === 429) return { error: 'locked' }
