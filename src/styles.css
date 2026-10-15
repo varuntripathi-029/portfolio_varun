@@ -3881,3 +3881,8 @@ h2.card-title-sm {
     padding: 28px 24px;
   }
 }
+
+/* the portrait sits in the top-left corner, on the same padding as the text */
+.exp-grid .hero {
+  align-items: flex-start;
+}

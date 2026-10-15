@@ -287,6 +287,6 @@ An optional "game" reached from a collapsed card named **Paper Hands** (kicker "
 
 ## 13. The hero card
 
-- The portrait sits **beside** the words (photo 120x150, which is the size to keep, with the handwritten "yes, a real person" under it), not above them. The card has generous padding (44px by 48px) and a 31px headline so it does not feel cramped. Below 560px it stacks.
+- The portrait sits **beside** the words (photo 120x150, which is the size to keep, with the handwritten "yes, a real person" under it) in the top-left corner of the card, on the same padding as the text, with the words aligned to its top. The card has generous padding (44px by 48px) and a 31px headline so it does not feel cramped. Below 560px it stacks.
 - The Experience page is two independent columns (`.exp-col`): hero then the Experience timeline on the left, "Now", Find me, Paper Hands, the toolbox and the reel on the right. Opening a card only moves its own column, and the timeline rises right under the hero. Below 1000px the columns dissolve (`display: contents`) and `order` restores hero, Now/Find me, Experience, toolbox.
 - Pressing the portrait (it is a button) opens it large in a dialog (`Portrait.tsx`, `data-overlay="photo"`, so the pager ignores arrow keys while it is open). Click outside, the close button or Esc dismisses it and focus returns to the portrait. The source image is 480x600, so replace `public/varun.jpg` with a larger crop if it should be sharper when enlarged.
