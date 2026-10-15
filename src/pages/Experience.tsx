@@ -3,6 +3,7 @@ import { ExpandCard, Reel, Timeline, Words } from '../components'
 import { accentAt, hueAt } from '../palette'
 import type { CSSProperties } from 'react'
 import Subscribe from '../Subscribe'
+import Portrait from '../Portrait'
 
 const reel = [
   'RAG pipelines',
@@ -33,25 +34,34 @@ const links = [
 export default function Experience() {
   return (
     <div className="exp-grid">
+      <div className="exp-col">
       <section className="card hero">
-        <div className="hero-id">
-          <img className="avatar" src={profile.photo} alt="Portrait of Varun Tripathi" width={108} height={135} />
-          <span className="scribble" aria-hidden="true">
-            yes, a real
-            <br />
-            person
-          </span>
+        <Portrait src={profile.photo} alt="Portrait of Varun Tripathi" name={profile.name} />
+        <div className="hero-copy">
+          <p className="hello">Hi, I’m {profile.name}</p>
+          <h1>
+            <Words text={profile.headline} />
+          </h1>
+          <p className="lede">{profile.intro}</p>
+          <a className="pill-btn" href={profile.resume} target="_blank" rel="noreferrer">
+            Resume
+          </a>
         </div>
-        <p className="hello">Hi, I’m {profile.name}</p>
-        <h1>
-          <Words text={profile.headline} />
-        </h1>
-        <p className="lede">{profile.intro}</p>
-        <a className="pill-btn" href={profile.resume} target="_blank" rel="noreferrer">
-          Resume
-        </a>
       </section>
 
+      <section className="card exp-timeline">
+        <h2 className="card-title card-title-sm">Experience</h2>
+        <Timeline
+          items={experience.map((e) => ({
+            title: `${e.role}, ${e.org}`,
+            meta: e.period,
+            lines: e.points,
+          }))}
+        />
+      </section>
+      </div>
+
+      <div className="exp-col">
       <div className="side-stack">
         <section className="banner now" style={{ background: 'var(--c-blue)' }}>
           <div className="chips">
@@ -107,17 +117,6 @@ export default function Experience() {
       </div>
 
 
-      <section className="card">
-        <h2 className="card-title card-title-sm">Experience</h2>
-        <Timeline
-          items={experience.map((e) => ({
-            title: `${e.role}, ${e.org}`,
-            meta: e.period,
-            lines: e.points,
-          }))}
-        />
-      </section>
-
       <div className="exp-right">
       <ExpandCard
         title="The toolbox"
@@ -144,6 +143,7 @@ export default function Experience() {
         </dl>
       </ExpandCard>
       <Reel items={reel} />
+      </div>
       </div>
     </div>
   )

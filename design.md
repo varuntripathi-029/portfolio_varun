@@ -284,3 +284,9 @@ An optional "game" reached from a collapsed card named **Paper Hands** (kicker "
 - **Local:** `npm run dev` serves `/api/pulse` through a small Vite plugin using `.env.local`. Use `STATS_PREFIX=test` there and delete `test:*` keys afterwards.
 - **Quarterly reset:** counts are stored per calendar month (`pf:YYYY-MM:...`) and every key is set to expire at 00:00 IST on 1 Jan, 1 Apr, 1 Jul and 1 Oct (`EXPIREAT`), so each quarter starts from zero with no cron job and the free database stays small. `/admin` shows the whole quarter or any one of its three months (unique visitors across months use `PFCOUNT` over several keys, so they are not double counted). Emails are the one thing that is never reset.
 - Never add the admin path to the sidebar, search index or sitemap, and never print the passphrase or tokens in logs or chat.
+
+## 13. The hero card
+
+- The portrait sits **beside** the words (photo 120x150 with the handwritten "yes, a real person" under it), not above them, so the card is only as tall as its text. Below 560px it stacks.
+- The Experience page is two independent columns (`.exp-col`): hero then the Experience timeline on the left, "Now", Find me, Paper Hands, the toolbox and the reel on the right. Opening a card only moves its own column, and the timeline rises right under the hero. Below 1000px the columns dissolve (`display: contents`) and `order` restores hero, Now/Find me, Experience, toolbox.
+- Pressing the portrait (it is a button) opens it large in a dialog (`Portrait.tsx`, `data-overlay="photo"`, so the pager ignores arrow keys while it is open). Click outside, the close button or Esc dismisses it and focus returns to the portrait. The source image is 480x600, so replace `public/varun.jpg` with a larger crop if it should be sharper when enlarged.

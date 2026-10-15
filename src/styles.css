@@ -3664,3 +3664,170 @@ h2.card-title-sm {
   font-size: 12px;
   color: var(--ink-soft);
 }
+
+/* ---- hero card: the photo sits beside the words, so no tall column of empty space ---- */
+.exp-col {
+  display: grid;
+  gap: var(--gutter);
+  align-content: start;
+  min-width: 0;
+}
+
+.exp-grid .side-stack {
+  align-self: auto;
+  grid-template-rows: none;
+}
+
+.exp-grid .hero {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 28px;
+  min-height: 0;
+  padding: 26px 32px;
+}
+
+.hero-copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  justify-items: start;
+}
+
+.portrait {
+  flex: none;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.portrait-btn {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  border-radius: 24px;
+}
+
+.portrait-btn:focus-visible {
+  outline: 2px solid var(--c-blue);
+  outline-offset: 4px;
+}
+
+.exp-grid .avatar {
+  width: 120px;
+  height: 150px;
+  margin: 0;
+  display: block;
+  border-radius: 22px;
+}
+
+.exp-grid .portrait .scribble {
+  margin: 0;
+  font-size: 21px;
+  white-space: nowrap;
+  transform: rotate(-3deg);
+}
+
+/* the photo, large, in front of the page */
+.photo-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(10, 9, 8, 0.82);
+  backdrop-filter: blur(10px);
+  cursor: zoom-out;
+  animation: photo-fade 0.25s var(--ease-soft) both;
+}
+
+.photo-frame {
+  margin: 0;
+  max-width: min(92vw, 560px);
+  animation: photo-pop 0.4s var(--ease-expand) both;
+  cursor: default;
+}
+
+.photo-frame img {
+  display: block;
+  width: 100%;
+  max-height: 82vh;
+  object-fit: contain;
+  border-radius: 20px;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5);
+}
+
+.photo-frame figcaption {
+  margin-top: 14px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 18px;
+  color: #f1eee6;
+}
+
+.photo-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.photo-close:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+@keyframes photo-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes photo-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+}
+
+/* below two columns the cells flow back into the original reading order */
+@media (max-width: 1000px) {
+  .exp-grid .exp-col {
+    display: contents;
+  }
+
+  .exp-grid .hero {
+    order: 1;
+  }
+
+  .exp-grid .side-stack {
+    order: 2;
+  }
+
+  .exp-grid .exp-timeline {
+    order: 3;
+  }
+
+  .exp-grid .exp-right {
+    order: 4;
+  }
+}
+
+@media (max-width: 560px) {
+  .exp-grid .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
