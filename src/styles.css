@@ -3831,3 +3831,53 @@ h2.card-title-sm {
     gap: 16px;
   }
 }
+
+/* ---- hero card: room to breathe ---- */
+.exp-grid .hero {
+  gap: 40px;
+  padding: 44px 48px;
+}
+
+.hero-copy {
+  gap: 10px;
+}
+
+.exp-grid .hello {
+  font-size: 30px;
+}
+
+.exp-grid .hero h1 {
+  font-size: 31px;
+  line-height: 1.16;
+  max-width: 22ch;
+  margin-top: 2px;
+}
+
+.exp-grid .hero .lede {
+  margin-top: 8px;
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 46ch;
+}
+
+.exp-grid .hero .pill-btn {
+  margin-top: 16px;
+  padding: 12px 24px;
+}
+
+@media (max-width: 1250px) {
+  .exp-grid .hero {
+    gap: 28px;
+    padding: 34px 34px;
+  }
+
+  .exp-grid .hero h1 {
+    font-size: 27px;
+  }
+}
+
+@media (max-width: 560px) {
+  .exp-grid .hero {
+    padding: 28px 24px;
+  }
+}
