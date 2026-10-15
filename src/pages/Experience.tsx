@@ -2,6 +2,7 @@ import { experience, profile, skills } from '../data'
 import { ExpandCard, Reel, Timeline, Words } from '../components'
 import { accentAt, hueAt } from '../palette'
 import type { CSSProperties } from 'react'
+import Subscribe from '../Subscribe'
 
 const reel = [
   'RAG pipelines',
@@ -83,6 +84,7 @@ export default function Experience() {
               </li>
             ))}
           </ul>
+          <Subscribe />
         </section>
 
         <ExpandCard

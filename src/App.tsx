@@ -6,6 +6,8 @@ import Projects from './pages/Projects'
 import Hackathons from './pages/Hackathons'
 import Blogs from './pages/Blogs'
 import BlogPost from './pages/BlogPost'
+import Admin from './pages/Admin'
+import { trackView } from './pulse'
 import Leadership from './pages/Leadership'
 import Pager, { type PagerSection } from './Pager'
 import Search from './Search'
@@ -212,10 +214,17 @@ function ScrollToTop({ enabled }: { enabled: boolean }) {
 
 export default function App() {
   const onPost = useMatch('/blogs/:slug') !== null
+  const onAdmin = useMatch('/admin') !== null
+  const { pathname: here } = useLocation()
   const [searchOpen, setSearchOpen] = useState(false)
   const [labOpen, setLabOpen] = useState(false)
   useRevealAndGlow()
   useSmoothLayout()
+
+  // every section or write-up a visitor lands on counts as one view
+  useEffect(() => {
+    if (!here.startsWith('/admin')) trackView(here)
+  }, [here])
 
   useEffect(() => {
     const open = () => setLabOpen(true)
@@ -238,11 +247,12 @@ export default function App() {
   }, [])
 
   return (
-    <div className={`shell${onPost ? '' : ' shell--pager'}`}>
+    <div className={`shell${onAdmin ? ' shell--admin' : onPost ? '' : ' shell--pager'}`}>
       <ScrollToTop enabled={onPost} />
-      <Sidebar onSearch={() => setSearchOpen(true)} />
+      {!onAdmin && <Sidebar onSearch={() => setSearchOpen(true)} />}
       <main className="main">
         <Routes>
+          <Route path="/admin" element={<Admin />} />
           <Route path="/blogs/:slug" element={<BlogPost />} />
           <Route path="*" element={<Pager sections={sections} />} />
         </Routes>

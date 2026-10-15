@@ -6,7 +6,7 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/((?!assets/|data/|shots/|search-index\\.json|varun).*)",
+      "source": "/((?!api/|assets/|data/|shots/|search-index\\.json|varun).*)",
       "destination": "/index.html"
     }
   ],
@@ -35,6 +35,15 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
+      "source": "/admin",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
         }
       ]
     }

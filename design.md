@@ -90,7 +90,7 @@ Sections sit side by side in a horizontal flex track (`.pager`). Pages turn **ri
 - **Touch:** horizontal swipes pan the track natively and snap, URL synced when it settles. A vertical swipe of at least 90 px at the end of a section still moves on (phones).
 - **Other inputs:** arrow left/right, arrow down/up, Page Down/Up and Space (the last three only when the section fits); the bottom dots; the sidebar.
 - **Arriving** at a section always lands at its top.
-- **Elastic ends:** scrolling past the top or bottom of a section stretches it like rubber (up to 84 px, following half the scroll, resistance rising), then it snaps back in 0.16s once the scrolling stops (40 ms), with no overshoot. Scrolling back the other way eases the stretch off first. Constants `STRETCH_*` in `Pager.tsx`.
+- **Elastic ends:** scrolling past the top or bottom of a section stretches it like rubber (up to 24 px, following half the scroll, resistance rising), then it snaps back in 0.16s once the scrolling stops (40 ms), with no overshoot. Scrolling back the other way eases the stretch off first. Constants `STRETCH_*` in `Pager.tsx`.
 - **First load:** a deep link such as `/blogs` positions the track instantly with no slide.
 - **Phones use the same pager.** Below 760 px the sidebar becomes a one-row top bar, the section fills the rest of the screen (`100dvh`), and the outbound links live in the Find me card.
 
@@ -272,3 +272,12 @@ An optional "game" reached from a collapsed card named **Paper Hands** (kicker "
 
 - Commits are authored only by the owner (`varuntripathi-029`). No co-author trailers and no AI tool names in commit messages.
 - Keep secrets out: `.env*`, key files and `.claude/` are git-ignored. The root copy of the resume is ignored; only `public/` is served.
+
+## 12. Visitor counts, the note list and /admin
+
+- **Server:** one Vercel function, `api/pulse.ts`, backed by Upstash Redis (REST). Variables: `KV_REST_API_URL`, `KV_REST_API_TOKEN`, `ADMIN_PASSPHRASE`, optional `STATS_PREFIX` (keeps test data apart). Real values live only in Vercel and in the git-ignored `.env.local`; `.env.example` lists the names.
+- **Counting** (`src/pulse.ts`, called from `App.tsx`): each section or write-up landed on is one view. A random id in localStorage makes one person one unique visitor (HyperLogLog), no cookies, no IP stored. Local hosts, Do Not Track and the owner's own browser (set after signing in to /admin) are skipped.
+- **Emails** are opt-in only: the form under Find me (`Subscribe.tsx`) says what the address is used for, has a hidden honeypot field and a per-client hourly limit.
+- **/admin** (`pages/Admin.tsx`): not linked anywhere, `noindex` by meta and `X-Robots-Tag`. The passphrase is checked on the server with a constant-time compare, with a lockout of 10 wrong tries per hour per client. Shows visitors, visits, section views, 30-day bars, sections, referrers, countries, and the email list with copy-all and CSV.
+- **Local:** `npm run dev` serves `/api/pulse` through a small Vite plugin using `.env.local`. Use `STATS_PREFIX=test` there and delete `test:*` keys afterwards.
+- Never add the admin path to the sidebar, search index or sitemap, and never print the passphrase or tokens in logs or chat.

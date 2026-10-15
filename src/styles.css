@@ -3232,3 +3232,184 @@ h3,
   cursor: grabbing;
   user-select: none;
 }
+
+/* ---- the opt-in note list in Find me ---- */
+.sub-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.sub-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.sub-row {
+  display: flex;
+  gap: 8px;
+}
+
+.sub-row input,
+.adm input[type='password'] {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+}
+
+.sub-row input:focus-visible {
+  outline: 2px solid var(--c-blue);
+  outline-offset: 2px;
+}
+
+.sub-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.sub-fine,
+.sub-msg,
+.sub-thanks {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.sub-thanks {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.sub-msg {
+  color: var(--c-vermilion);
+}
+
+/* ---- the private admin page ---- */
+.shell--admin {
+  display: block;
+  max-width: 1040px;
+}
+
+.adm {
+  display: grid;
+  gap: 16px;
+  padding: 12px 0 48px;
+}
+
+.adm-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 600;
+}
+
+.adm-login {
+  max-width: 420px;
+  display: grid;
+  gap: 12px;
+}
+
+.adm-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.adm-n {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.adm-l {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.adm-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.adm-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 120px;
+  margin-top: 14px;
+}
+
+.adm-bar {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.adm-bar span {
+  display: block;
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  background: var(--c-blue);
+}
+
+.adm-rows {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.adm-rows li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.adm-rows span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.adm-empty,
+.adm-fine {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.adm-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+@media (max-width: 760px) {
+  .adm-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .adm-cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
