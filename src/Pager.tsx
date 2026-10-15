@@ -4,16 +4,16 @@ import { useLocation, useNavigate } from 'react-router-dom'
 export type PagerSection = { path: string; label: string; node: ReactNode }
 
 // Long enough to read as a glide, short enough that it never feels like waiting.
-const DURATION = 780
-// After a glide lands, the next one is held off for this long so a quick second scroll cannot
+const DURATION = 720
+// After a glide lands, the next one is held off for this long so a quick second swipe cannot
 // chain straight into another section.
-const COOLDOWN = 600
-// How much further a wheel or trackpad must scroll past the end of a tall section to move on
-// (about three or four mouse-wheel notches), and how much a section that fits needs.
-const OVERSCROLL = 360
-const FIT_PUSH = 90
-// Pushes closer together than this add up; a longer pause starts again from zero.
-const PUSH_WINDOW = 350
+const COOLDOWN = 500
+// How far a sideways trackpad swipe must travel before it counts as a page turn.
+const SIDE_PUSH = 70
+// A mouse drag turns the page past this share of the width, or when it is thrown fast enough
+// (pixels per millisecond).
+const DRAG_SHARE = 0.14
+const DRAG_FLING = 0.6
 // How far a vertical swipe must travel to count as "next" or "previous".
 const SWIPE = 90
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
@@ -46,9 +46,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
       const next = Math.min(Math.max(i, 0), sections.length - 1)
       consumed.current = true
       const arriving = panels.current[next]
-      if (arriving && next !== current.current) {
-        arriving.scrollTop = next > current.current ? 0 : arriving.scrollHeight
-      }
+      if (arriving && next !== current.current) arriving.scrollTop = 0
       if (sections[next].path !== window.location.pathname) {
         navigate(sections[next].path, { replace: true })
       }
@@ -64,6 +62,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     const target = i * el.clientWidth
     if (instant || Math.abs(target - el.scrollLeft) < 1) {
       el.scrollLeft = target
+      el.style.scrollSnapType = ''
       busy.current = false
       return
     }
@@ -105,52 +104,34 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     return () => window.removeEventListener('resize', on)
   }, [moveTo])
 
-  // Mouse wheel and trackpad: every vertical scroll ends in a move to the next section.
-  // A section that fits the screen moves on at once; a taller one scrolls inside itself, and
-  // once its end is reached a little more scrolling in the same direction moves on.
+  const dragging = useRef(false)
+
+  // Trackpad: a sideways swipe turns the page, one page per gesture. Vertical scrolling is left
+  // alone, so it only ever moves inside the section.
   useEffect(() => {
     const el = track.current
     if (!el) return
     let last = 0
     let pushed = 0
-    let lastPush = 0
-    let startedAtEdge = false
+    let sideways = false
 
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey) return
       const now = performance.now()
-      const fresh = now - last > 160
-      if (fresh) consumed.current = false
-      last = now
-
-      const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
-      const d = horizontal ? e.deltaX : e.deltaY
-      if (Math.abs(d) < 2) return
-      const dir = d > 0 ? 1 : -1
-
-      if (busy.current) {
-        e.preventDefault()
-        return
-      }
-
-      // A section taller than the screen scrolls inside itself. At its end, only a gesture that
-      // began there counts, and it takes a deliberate push; momentum that merely arrived at the
-      // end, or a flick while reading the top, never moves the page.
-      const panel = panels.current[current.current]
-      const tall = !horizontal && !!panel && overflows(panel)
-      const edge = !tall || (dir > 0 ? atBottom(panel!) : atTop(panel!))
-      if (fresh) startedAtEdge = edge
-      if (tall && !edge) {
+      if (now - last > 160) {
+        // a new gesture: decide its axis once, so a slightly diagonal swipe does not switch mid-way
+        consumed.current = false
         pushed = 0
-        return
+        sideways = Math.abs(e.deltaX) > Math.abs(e.deltaY)
       }
+      last = now
+      if (!sideways) return
 
       e.preventDefault()
-      if (!startedAtEdge) return
-      if (now - lastPush > PUSH_WINDOW || Math.sign(pushed) !== dir) pushed = 0
-      lastPush = now
-      pushed += d
-      if (Math.abs(pushed) >= (tall ? OVERSCROLL : FIT_PUSH) && !consumed.current) {
+      if (busy.current || consumed.current) return
+      pushed += e.deltaX
+      if (Math.abs(pushed) >= SIDE_PUSH) {
+        const dir = pushed > 0 ? 1 : -1
         pushed = 0
         go(current.current + dir)
       }
@@ -159,6 +140,121 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
   }, [go])
+
+  // Mouse: press, drag sideways and let go. The page follows the pointer, then settles on the
+  // nearest section, or the next one if it was pulled far or thrown.
+  useEffect(() => {
+    const el = track.current
+    if (!el) return
+    let id = -1
+    let sx = 0
+    let sy = 0
+    let from = 0
+    let armed = false
+    let moved = false
+    let lastX = 0
+    let lastT = 0
+    let vx = 0
+    let swallow = false
+
+    const settle = (dx: number, fling: number) => {
+      const far = Math.abs(dx) > el.clientWidth * DRAG_SHARE || (Math.abs(dx) > 60 && Math.abs(fling) > DRAG_FLING)
+      const step = far ? (dx < 0 ? 1 : -1) : 0
+      const target = Math.min(Math.max(current.current + step, 0), sections.length - 1)
+      dragging.current = false
+      el.classList.remove('is-dragging')
+      if (target !== current.current) go(target)
+      else moveTo(current.current, false)
+    }
+
+    const onDown = (e: PointerEvent) => {
+      if (e.pointerType === 'touch' || e.button !== 0 || busy.current) return
+      id = e.pointerId
+      sx = e.clientX
+      sy = e.clientY
+      from = el.scrollLeft
+      lastX = sx
+      lastT = e.timeStamp
+      vx = 0
+      armed = true
+      moved = false
+    }
+
+    const onMove = (e: PointerEvent) => {
+      if (!armed || e.pointerId !== id) return
+      const dx = e.clientX - sx
+      if (!moved) {
+        const dy = e.clientY - sy
+        if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) armed = false
+        if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy)) return
+        moved = true
+        dragging.current = true
+        cancelAnimationFrame(frame.current)
+        el.style.scrollSnapType = 'none'
+        el.classList.add('is-dragging')
+        window.getSelection()?.removeAllRanges()
+        try {
+          el.setPointerCapture(id)
+        } catch {
+          /* the pointer may already be gone */
+        }
+      }
+      el.scrollLeft = from - dx
+      const dt = e.timeStamp - lastT
+      if (dt > 0) vx = 0.7 * vx + 0.3 * ((e.clientX - lastX) / dt)
+      lastX = e.clientX
+      lastT = e.timeStamp
+    }
+
+    const onUp = (e: PointerEvent) => {
+      if (!armed || e.pointerId !== id) return
+      armed = false
+      if (!moved) return
+      try {
+        el.releasePointerCapture(id)
+      } catch {
+        /* already released */
+      }
+      // a drag must not also count as a click on whatever is under the pointer
+      swallow = true
+      window.setTimeout(() => (swallow = false), 60)
+      // a fling points the way the pointer was moving at release; the pull decides otherwise
+      settle(e.clientX - sx, -vx)
+    }
+
+    const onCancel = (e: PointerEvent) => {
+      if (!armed || e.pointerId !== id) return
+      armed = false
+      if (moved) settle(0, 0)
+    }
+
+    const onClick = (e: MouseEvent) => {
+      if (!swallow) return
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    const onSelect = (e: Event) => {
+      if (moved && armed) e.preventDefault()
+    }
+    const onDragStart = (e: Event) => e.preventDefault()
+
+    el.addEventListener('pointerdown', onDown)
+    el.addEventListener('pointermove', onMove)
+    el.addEventListener('pointerup', onUp)
+    el.addEventListener('pointercancel', onCancel)
+    el.addEventListener('click', onClick, true)
+    el.addEventListener('selectstart', onSelect)
+    el.addEventListener('dragstart', onDragStart)
+    return () => {
+      el.removeEventListener('pointerdown', onDown)
+      el.removeEventListener('pointermove', onMove)
+      el.removeEventListener('pointerup', onUp)
+      el.removeEventListener('pointercancel', onCancel)
+      el.removeEventListener('click', onClick, true)
+      el.removeEventListener('selectstart', onSelect)
+      el.removeEventListener('dragstart', onDragStart)
+    }
+  }, [go, moveTo, sections.length])
 
   // Touch: a vertical swipe moves between sections. A tall section scrolls first, and a swipe
   // that starts at its end moves on. Horizontal swipes pan the track natively and snap.
@@ -208,7 +304,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     if (!el) return
     let timer = 0
     const onScroll = () => {
-      if (busy.current) return
+      if (busy.current || dragging.current) return
       window.clearTimeout(timer)
       timer = window.setTimeout(() => {
         const i = Math.round(el.scrollLeft / el.clientWidth)

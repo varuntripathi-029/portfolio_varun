@@ -81,27 +81,22 @@ This is the most important layout rule. Each section is one screen, because a sc
 
 ## 5. The pager (horizontal scrolling)
 
-Sections sit side by side in a horizontal flex track (`.pager`). The user scrolls vertically (mouse wheel or trackpad) and the screen glides **right to left** to the next section. This is deliberate: it is not vertical page scroll.
+Sections sit side by side in a horizontal flex track (`.pager`). Pages turn **right to left** by a sideways gesture, and vertical scrolling only ever moves inside a section. This is deliberate: it is not vertical page scroll, and a vertical scroll never changes the page.
 
-- **URL is the single source of truth.** `/`, `/projects`, `/hackathons`, `/blogs`, `/leadership` each map to a section. Any path change animates the track. Wheel, keys, dots and sidebar all just change the path (`navigate(path, { replace: true })` for gestures).
-- **Animation:** custom `requestAnimationFrame` tween, 780ms, ease-in-out cubic, plus a 220ms cooldown. This is the "not snappy, not slow" sweet spot. Native `scroll-behavior: smooth` is not used because its duration cannot be controlled. Scroll snap is switched off during the tween and restored after.
-- **One gesture, one section.** A wheel gesture is a run of events with gaps under 160ms. After one section move the gesture is marked consumed, so trackpad momentum cannot skip several sections.
-- **Fallback:** if the active section overflows its panel by more than 40px, wheel scrolls inside it first and only pages on a fresh gesture at its edge.
-- **Other inputs:** arrow left/right, arrow down/up, Page Down/Up and Space; the bottom dots; touch swipes (native scroll with snap, URL synced when it settles).
+- **URL is the single source of truth.** `/`, `/projects`, `/hackathons`, `/blogs`, `/leadership` each map to a section. Any path change animates the track. Gestures, keys, dots and sidebar all just change the path (`navigate(path, { replace: true })` for gestures).
+- **Animation:** custom `requestAnimationFrame` tween, 720ms, ease-in-out cubic, plus a 500ms hold (`COOLDOWN`) so a second swipe cannot chain into another section. Native `scroll-behavior: smooth` is not used because its duration cannot be controlled. Scroll snap is switched off during the tween and restored after.
+- **Trackpad:** a sideways two-finger swipe turns the page once it has travelled `SIDE_PUSH` (70 px). A gesture is a run of wheel events with gaps under 160ms; its axis is decided once at the start (so a slightly diagonal swipe does not switch mid-way) and it moves one page at most, so momentum cannot skip sections.
+- **Mouse:** press and drag sideways. The page follows the pointer, then settles on the nearest section: it turns if pulled past 14% of the width (`DRAG_SHARE`), or thrown (`DRAG_FLING`, 0.6 px/ms, after at least 60 px). A drag never counts as a click on the card underneath, and text is not selected while dragging.
+- **Touch:** horizontal swipes pan the track natively and snap, URL synced when it settles. A vertical swipe of at least 90 px at the end of a section still moves on (phones).
+- **Other inputs:** arrow left/right, arrow down/up, Page Down/Up and Space (the last three only when the section fits); the bottom dots; the sidebar.
+- **Arriving** at a section always lands at its top.
 - **First load:** a deep link such as `/blogs` positions the track instantly with no slide.
-- **Mobile (<= 760px):** the pager is disabled and sections stack vertically; navigation scrolls into view.
+- **Phones use the same pager.** Below 760 px the sidebar becomes a one-row top bar, the section fills the rest of the screen (`100dvh`), and the outbound links live in the Find me card.
 
 ## 5b. Scroll consistency (read before touching the pager)
 
-Every vertical scroll, on every input, ends in the same right-to-left glide:
-
-- **Wheel and trackpad:** a section that fits the screen moves on after a deliberate scroll (`FIT_PUSH`, 90 px, about one wheel notch). A taller section scrolls inside itself; at its end, only a gesture that *began* there counts, and it takes `OVERSCROLL` (360 px, three or four notches) in the same direction. Momentum that merely arrives at the end never pages, and neither does a flick while reading the top of a section. Pushes add up within 350 ms and start again after a pause.
-- **After every glide** a 600 ms hold (`COOLDOWN`) stops a quick second scroll from chaining straight into another section. When a glide lands, the arriving section is placed at its near end: the top when moving forward, the bottom when going back.
-- **Touch (phones and tablets):** a vertical swipe of at least 90 px moves to the next or previous section. If the section is taller than the screen, only a swipe that starts at its end moves on, so reading is never interrupted. Horizontal swipes pan the track natively and snap.
-- **Keys, dots and the sidebar** all just change the URL, which animates the track.
-- **Phones use the same pager.** Below 760 px the sidebar becomes a one-row top bar, the section fills the rest of the screen (`100dvh`), and the outbound links live in the Find me card.
 - **Blog write-ups** (`/blogs/:slug`) are the one normal scrolling page; they arrive from the right with the same easing.
-- Do not special-case a section to scroll differently. If a section feels inconsistent, its content is taller than the screen and the inner-scroll fallback is doing its job.
+- Do not special-case a section to scroll differently. If a section feels long, it scrolls inside itself; only a sideways gesture, a drag, keys, dots or the sidebar change the page.
 
 ## 6. Color theory
 

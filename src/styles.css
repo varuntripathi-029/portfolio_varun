@@ -3225,3 +3225,10 @@ h3,
 .tiles-3.hack .mason-item[data-span='2'] > .mason-inner > .banner .banner-teaser {
   font-size: 14px;
 }
+
+/* while a mouse drag is turning the page: no text selection, a closed hand */
+.pager.is-dragging,
+.pager.is-dragging * {
+  cursor: grabbing;
+  user-select: none;
+}
