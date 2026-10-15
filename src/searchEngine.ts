@@ -8,6 +8,8 @@ export type Chunk = {
   title: string
   text: string
   group?: string
+  /** slug of the card or heading this chunk came from, so a result can open it */
+  target?: string
   vec: number[]
 }
 

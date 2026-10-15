@@ -90,7 +90,7 @@ Sections sit side by side in a horizontal flex track (`.pager`). Pages turn **ri
 - **Touch:** horizontal swipes pan the track natively and snap, URL synced when it settles. A vertical swipe of at least 90 px at the end of a section still moves on (phones).
 - **Other inputs:** arrow left/right, arrow down/up, Page Down/Up and Space (the last three only when the section fits); the bottom dots; the sidebar.
 - **Arriving** at a section always lands at its top.
-- **Elastic ends:** scrolling past the top or bottom of a section stretches it like rubber (up to 24 px, following half the scroll, resistance rising), then it snaps back in 0.07s once the scrolling stops (30 ms), so about 100 ms stretched in all, with no overshoot. Scrolling back the other way eases the stretch off first. Constants `STRETCH_*` in `Pager.tsx`.
+- **Elastic ends:** there is no custom effect. On a desktop each section is part of the page, so the window scrolls it and the browser's own rubber-band applies at the top and bottom, exactly as on the admin page and the blog write-ups. (Chrome only bounces the page itself, never a scrolling box inside it, which is why the sections do not scroll inside their own box on a desktop.) The track takes the height of the section on show; the section leaving is pinned in place while the page returns to the top.
 - **First load:** a deep link such as `/blogs` positions the track instantly with no slide.
 - **Phones use the same pager.** Below 760 px the sidebar becomes a one-row top bar, the section fills the rest of the screen (`100dvh`), and the outbound links live in the Find me card.
 

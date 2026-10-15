@@ -4,6 +4,7 @@
 import { writeFileSync } from 'node:fs'
 import { pipeline } from '@huggingface/transformers'
 import * as data from '../src/data.ts'
+import { slug } from '../src/focus.ts'
 
 const MODEL = 'Xenova/all-MiniLM-L6-v2'
 
@@ -20,13 +21,15 @@ const chunks = []
 const add = (path, section, title, text, extra = {}) =>
   chunks.push({ id: chunks.length, path, section, title, text: text.replace(/\s+/g, ' ').trim(), ...extra })
 
-add('/', 'Experience', 'About Varun', `${data.profile.headline}. ${data.profile.intro}`)
+add('/', 'Experience', 'About Varun', `${data.profile.headline}. ${data.profile.intro}`, { target: 'top' })
 
 for (const e of data.experience) {
-  add('/', 'Experience', `${e.role}, ${e.org}`, `${e.role} at ${e.org}, ${e.period}. ${e.points.join(' ')}`)
+  add('/', 'Experience', `${e.role}, ${e.org}`, `${e.role} at ${e.org}, ${e.period}. ${e.points.join(' ')}`, {
+    target: slug(`${e.role}, ${e.org}`),
+  })
 }
 for (const s of data.skills) {
-  add('/', 'Experience', `Skills: ${s.group}`, `${s.group} skills and tools: ${s.items}`)
+  add('/', 'Experience', `Skills: ${s.group}`, `${s.group} skills and tools: ${s.items}`, { target: 'the-toolbox' })
 }
 
 add(
@@ -34,29 +37,37 @@ add(
   'Experience',
   'Paper Hands (quant lab)',
   'Paper Hands is a quant backtest terminal on 13 years of real Nifty 50 index-fund prices. Pick a trading rule, run it, and see whether it beats buy-and-hold after charges and capital-gains tax. Sharpe ratio, drawdown, volatility, rolling-window win rates, trade blotter. Finance, trading, backtesting, quant, simulation, game.',
+  { target: 'paper-hands' },
 )
 
 for (const p of data.projects) {
   const alias = ALIASES[p.slug] ?? ''
-  add('/projects', 'Projects', p.title, `${p.title}. ${p.tagline}. ${p.summary}`, { group: p.title })
-  add('/projects', 'Projects', p.title, `${p.title}. ${p.facts.join('. ')}. Stack: ${p.stack.join(', ')}. ${alias}`, { group: p.title })
+  add('/projects', 'Projects', p.title, `${p.title}. ${p.tagline}. ${p.summary}`, { group: p.title, target: slug(p.title) })
+  add('/projects', 'Projects', p.title, `${p.title}. ${p.facts.join('. ')}. Stack: ${p.stack.join(', ')}. ${alias}`, {
+    group: p.title,
+    target: slug(p.title),
+  })
 }
 
 for (const h of data.hackathons) {
-  add('/hackathons', 'Hackathons', `${h.title} (${h.event})`, `${h.result} at ${h.event}, ${h.when}. ${h.title}. ${h.detail}`)
+  add('/hackathons', 'Hackathons', `${h.title} (${h.event})`, `${h.result} at ${h.event}, ${h.when}. ${h.title}. ${h.detail}`, {
+    target: slug(h.title),
+  })
 }
-add('/hackathons', 'Hackathons', 'Honors', data.honors.join('. '))
+add('/hackathons', 'Hackathons', 'Honors', data.honors.join('. '), { target: 'honors' })
 
 for (const b of data.blogs) {
   const path = `/blogs/${b.slug}`
-  add(path, 'Blogs', b.title, `${b.org}: ${b.title}. ${b.summary}`, { group: b.title })
+  add(path, 'Blogs', b.title, `${b.org}: ${b.title}. ${b.summary}`, { group: b.title, target: 'top' })
   for (const s of b.sections) {
-    add(path, 'Blogs', `${b.title}: ${s.heading}`, `${b.org}. ${s.heading}. ${s.text}`, { group: b.title })
+    add(path, 'Blogs', `${b.title}: ${s.heading}`, `${b.org}. ${s.heading}. ${s.text}`, { group: b.title, target: slug(s.heading) })
   }
 }
 
 for (const l of data.leadership) {
-  add('/leadership', 'Leadership', `${l.role}, ${l.org}`, `${l.role} at ${l.org}, ${l.period}. ${l.points.join(' ')}`)
+  add('/leadership', 'Leadership', `${l.role}, ${l.org}`, `${l.role} at ${l.org}, ${l.period}. ${l.points.join(' ')}`, {
+    target: slug(`${l.role}, ${l.org}`),
+  })
 }
 
 console.log(`Embedding ${chunks.length} chunks with ${MODEL}...`)

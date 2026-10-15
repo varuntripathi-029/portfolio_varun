@@ -1,3 +1,4 @@
+import { slug as focusKey } from '../focus'
 import { Link, useParams } from 'react-router-dom'
 import { blogs } from '../data'
 
@@ -44,7 +45,7 @@ export default function BlogPost() {
       </header>
       <section className="card post-body">
         {post.sections.map((s) => (
-          <div key={s.heading} className="post-section">
+          <div key={s.heading} data-focus={focusKey(s.heading)} className="post-section">
             <h2>{s.heading}</h2>
             <p>{s.text}</p>
           </div>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { focusTarget } from './focus'
 import { isModelReady, loadIndex, loadModel, search, type Hit } from './searchEngine'
 
 const EXAMPLES = [
@@ -19,6 +20,7 @@ function snippet(text: string, max = 150) {
 
 export default function Search({ open, onClose }: { open: boolean; onClose: () => void }) {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const inputRef = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState('')
   const [hits, setHits] = useState<Hit[]>([])
@@ -74,8 +76,12 @@ export default function Search({ open, onClose }: { open: boolean; onClose: () =
 
   const go = (hit: Hit | undefined) => {
     if (!hit) return
+    const arriving = hit.chunk.path !== pathname
     navigate(hit.chunk.path)
     onClose()
+    // wait out the glide to another section, then open and flash the exact card
+    const target = hit.chunk.target
+    if (target) window.setTimeout(() => focusTarget(target), arriving ? 760 : 120)
   }
 
   const onInputKey = (e: React.KeyboardEvent) => {

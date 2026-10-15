@@ -14,16 +14,15 @@ const SIDE_PUSH = 70
 // (pixels per millisecond).
 const DRAG_SHARE = 0.14
 const DRAG_FLING = 0.6
-// Elastic stretch past the top or bottom of a section: the furthest it can be pulled (px), how
-// much of the scroll it follows, and how long after the last scroll it springs back.
-const STRETCH_MAX = 24
-const STRETCH_PULL = 0.5
-const STRETCH_IDLE = 30
 // How far a vertical swipe must travel to count as "next" or "previous".
 const SWIPE = 90
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
-// A section taller than the screen scrolls inside itself first.
+// On a desktop the section is part of the page, so the window scrolls it and the browser's own
+// rubber-band applies at the top and bottom. On a phone the section scrolls inside its screen.
+const isDesktop = () => window.matchMedia('(min-width: 761px)').matches
+
+// A section taller than the screen scrolls inside itself first (phones).
 const overflows = (panel: HTMLElement | null | undefined) => !!panel && panel.scrollHeight - panel.clientHeight > 40
 const atBottom = (p: HTMLElement) => p.scrollTop + p.clientHeight >= p.scrollHeight - 2
 const atTop = (p: HTMLElement) => p.scrollTop <= 1
@@ -37,6 +36,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
   const frame = useRef(0)
   const busy = useRef(false)
   const consumed = useRef(false)
+  const shown = useRef(0)
 
   const indexOfPath = useCallback(
     (p: string) => Math.max(0, sections.findIndex((s) => s.path === p)),
@@ -65,10 +65,27 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     if (!el) return
     cancelAnimationFrame(frame.current)
     const target = i * el.clientWidth
+
+    // The window scrolls the section, so the one leaving is pinned where it was while the page
+    // returns to the top for the one arriving.
+    const leaving = panels.current[shown.current]
+    shown.current = i
+    let pinned: HTMLElement | null = null
+    if (isDesktop() && window.scrollY > 0) {
+      if (leaving && !instant) {
+        pinned = leaving
+        leaving.style.transform = `translateY(${window.scrollY}px)`
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    }
+    const unpin = () => {
+      if (pinned) pinned.style.transform = ''
+    }
     if (instant || Math.abs(target - el.scrollLeft) < 1) {
       el.scrollLeft = target
       el.style.scrollSnapType = ''
       busy.current = false
+      unpin()
       return
     }
     const from = el.scrollLeft
@@ -83,6 +100,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
       } else {
         el.scrollLeft = target
         el.style.scrollSnapType = ''
+        unpin()
         window.setTimeout(() => {
           busy.current = false
         }, COOLDOWN)
@@ -102,6 +120,25 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlIndex])
 
+  // On a desktop the track takes the height of the section on show, so the document is exactly as
+  // long as that section and the window scrolls it.
+  useEffect(() => {
+    const el = track.current
+    const panel = panels.current[active]
+    if (!el || !panel) return
+    const fit = () => {
+      el.style.height = isDesktop() ? `${panel.offsetHeight}px` : ''
+    }
+    fit()
+    const ro = new ResizeObserver(fit)
+    ro.observe(panel)
+    window.addEventListener('resize', fit)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', fit)
+    }
+  }, [active])
+
   // Keep the track aligned when the window changes size.
   useEffect(() => {
     const on = () => moveTo(current.current, true)
@@ -112,28 +149,13 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
   const dragging = useRef(false)
 
   // Trackpad: a sideways swipe turns the page, one page per gesture. Vertical scrolling is left
-  // alone, so it only ever moves inside the section.
+  // completely alone, so the page scrolls and bounces the way the browser always does.
   useEffect(() => {
     const el = track.current
     if (!el) return
     let last = 0
     let pushed = 0
     let sideways = false
-    let stretch = 0
-    let stretched: HTMLElement | null = null
-    let release = 0
-
-    const spring = () => {
-      const p = stretched
-      stretched = null
-      stretch = 0
-      if (!p) return
-      p.style.transition = 'transform 0.07s cubic-bezier(0.2, 0.8, 0.3, 1)'
-      p.style.transform = ''
-      window.setTimeout(() => {
-        if (p.style.transform === '') p.style.transition = ''
-      }, 110)
-    }
 
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey) return
@@ -146,28 +168,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
       }
       last = now
       if (!sideways) {
-        // Vertical: scroll inside the section; past its top or bottom, stretch like rubber.
-        const panel = panels.current[current.current]
-        if (!panel || busy.current) return
-        const dy = e.deltaY
-        const atEdge = dy < 0 ? atTop(panel) : atBottom(panel)
-        const relaxing = stretch !== 0 && Math.sign(stretch) === -Math.sign(dy) * -1
-        if (!atEdge && stretch === 0) return
-        e.preventDefault()
-        if (stretched && stretched !== panel) spring()
-        stretched = panel
-        if (atEdge && !relaxing) {
-          stretch -= dy * STRETCH_PULL * (1 - Math.min(Math.abs(stretch) / STRETCH_MAX, 1))
-        } else {
-          // scrolling back the other way eases the stretch off before real scrolling resumes
-          stretch -= dy
-          if (Math.sign(stretch) !== Math.sign(stretch + dy)) stretch = 0
-        }
-        stretch = Math.max(-STRETCH_MAX, Math.min(STRETCH_MAX, stretch))
-        panel.style.transition = 'none'
-        panel.style.transform = `translate3d(0, ${stretch}px, 0)`
-        window.clearTimeout(release)
-        release = window.setTimeout(spring, STRETCH_IDLE)
+        // Vertical scrolling is the browser's own, so its bounce at either end is the default one.
         return
       }
 
@@ -183,7 +184,6 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
 
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => {
-      window.clearTimeout(release)
       el.removeEventListener('wheel', onWheel)
     }
   }, [go])
@@ -316,7 +316,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
 
     const onStart = (e: TouchEvent) => {
       tracking = false
-      if (busy.current || e.touches.length !== 1) return
+      if (busy.current || e.touches.length !== 1 || isDesktop()) return
       const panel = panels.current[current.current]
       const tall = overflows(panel)
       canNext = !tall || (!!panel && atBottom(panel))
@@ -377,12 +377,7 @@ export default function Pager({ sections }: { sections: PagerSection[] }) {
       let step = 0
       if (e.key === 'ArrowRight') step = 1
       else if (e.key === 'ArrowLeft') step = -1
-      else if (['ArrowDown', 'PageDown', ' '].includes(e.key) || ['ArrowUp', 'PageUp'].includes(e.key)) {
-        const panel = panels.current[current.current]
-        if (overflows(panel)) return
-        step = ['ArrowDown', 'PageDown', ' '].includes(e.key) ? 1 : -1
-        e.preventDefault()
-      }
+
       if (step) go(current.current + step)
     }
     window.addEventListener('keydown', onKey)

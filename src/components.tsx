@@ -1,4 +1,5 @@
-import { useId, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react'
+import { slug } from './focus'
 import { accentAt, hueAt } from './palette'
 
 type Accented = CSSProperties & { '--accent'?: string }
@@ -14,6 +15,18 @@ function WheelToggle({ open, light }: { open: boolean; light?: boolean }) {
       </span>
     </span>
   )
+}
+
+// A search result asks the card with this key to open itself.
+function useFocusOpen(key: string, open: () => void) {
+  useEffect(() => {
+    const on = (e: Event) => {
+      if ((e as CustomEvent<string>).detail === key) open()
+    }
+    window.addEventListener('focus-open', on)
+    return () => window.removeEventListener('focus-open', on)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key])
 }
 
 export function Collapse({ open, children }: { open: boolean; children: ReactNode }) {
@@ -54,6 +67,15 @@ export function Timeline({
   const [openIdx, setOpenIdx] = useState<number | null>(null)
   const base = useId()
 
+  useEffect(() => {
+    const on = (e: Event) => {
+      const i = items.findIndex((it) => slug(it.title) === (e as CustomEvent<string>).detail)
+      if (i >= 0) setOpenIdx(i)
+    }
+    window.addEventListener('focus-open', on)
+    return () => window.removeEventListener('focus-open', on)
+  }, [items])
+
   return (
     <ol className="timeline">
       {items.map((it, i) => {
@@ -62,6 +84,7 @@ export function Timeline({
         return (
           <li
             key={it.title}
+            data-focus={slug(it.title)}
             className={`tl-item${open ? ' is-open' : ''}`}
             style={{ '--accent': accentAt(i * 2) } as Accented}
           >
@@ -112,8 +135,10 @@ export function ExpandCard({
 }) {
   const [open, setOpen] = useState(false)
   const id = useId()
+  useFocusOpen(slug(title), () => setOpen(true))
   return (
     <section
+      data-focus={slug(title)}
       className={`card expand${open ? ' is-open' : ''}`}
       style={accent ? ({ '--accent': accent } as Accented) : undefined}
     >
@@ -158,8 +183,9 @@ export function ExpandBanner({
 }) {
   const [open, setOpen] = useState(false)
   const id = useId()
+  useFocusOpen(slug(title), () => setOpen(true))
   return (
-    <article className={`banner expand${open ? ' is-open' : ''}`} style={{ background: color }}>
+    <article data-focus={slug(title)} className={`banner expand${open ? ' is-open' : ''}`} style={{ background: color }}>
       <button
         type="button"
         className="banner-head"

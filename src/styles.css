@@ -3413,3 +3413,66 @@ h3,
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* a search result lands here: one pulse of an outline so the eye finds the card */
+.is-found {
+  outline: 3px solid transparent;
+  outline-offset: 5px;
+  animation: found 1.8s ease-out;
+}
+
+@keyframes found {
+  0% {
+    outline-color: transparent;
+  }
+  15%,
+  70% {
+    outline-color: var(--ink);
+  }
+  100% {
+    outline-color: transparent;
+  }
+}
+
+/* ---- desktop: the section is part of the page, so the window scrolls it and the browser's own
+   rubber-band applies at the top and bottom, exactly as it does on any normal page ---- */
+@media (min-width: 761px) {
+  .shell--pager {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .shell--pager .main {
+    height: auto;
+    min-height: calc(100vh - var(--gutter) * 2);
+  }
+
+  .pager-wrap {
+    height: auto;
+  }
+
+  .pager {
+    height: auto;
+    min-height: calc(100vh - var(--gutter) * 2);
+    align-items: flex-start;
+    overscroll-behavior-x: contain;
+    overscroll-behavior-y: auto;
+  }
+
+  .pager-panel {
+    height: auto;
+    overflow: visible;
+    overscroll-behavior: auto;
+  }
+
+  /* sits at the foot of the screen while the page scrolls under it */
+  .pager-dots {
+    position: sticky;
+    bottom: 14px;
+    left: auto;
+    width: max-content;
+    margin: -48px auto 0;
+    transform: none;
+  }
+}
