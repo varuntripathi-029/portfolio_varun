@@ -16,7 +16,7 @@ const DRAG_SHARE = 0.14
 const DRAG_FLING = 0.6
 // Elastic stretch past the top or bottom of a section: the furthest it can be pulled (px), how
 // much of the scroll it follows, and how long after the last scroll it springs back.
-const STRETCH_MAX = 84
+const STRETCH_MAX = 24
 const STRETCH_PULL = 0.5
 const STRETCH_IDLE = 40
 // How far a vertical swipe must travel to count as "next" or "previous".
